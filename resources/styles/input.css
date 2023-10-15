@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Roboto:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, 
+*::before, 
+*::after{
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+*{
+  @apply tracking-tight;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+input,
+select,
+textarea{
+  @apply font-poppins outline-none;
+}
+
+select{
+  background: url(../../public/icons/arrow-down-linear.svg) no-repeat;
+  background-size: 12px;
+  background-position: right center;
+  background-origin: content-box;
+}
+
+.loader{
+  @apply fixed inset-0 flex flex-col items-center justify-center gap-1 bg-white z-[100] opacity-0 invisible;
+}
+
+.loader.show{
+  @apply opacity-100 visible transition-all;
+}
+
+.toast{
+  @apply fixed top-[2.5rem] left-1/2 -translate-x-1/2 w-max z-30 rounded-md overflow-hidden shadow-lg invisible opacity-0 ease-linear duration-200;
+}
+
+.toast.success{
+  @apply bg-emerald-500 shadow-emerald-900/30 top-[5rem] visible opacity-100;
+}
+
+.toast.error{
+  @apply bg-red-500 shadow-red-900/30 top-[5rem] visible opacity-100;
+}
+
+.toast-icon,
+.toast-message{
+  @apply translate-y-[180%] opacity-0 transition-all;
+}
+
+.toast.success .toast-icon,
+.toast.error .toast-icon,
+.toast.success .toast-message,
+.toast.error .toast-message{
+  @apply translate-y-0 opacity-100;
+}
+
+.toast-close{
+  @apply translate-x-full opacity-0 transition-all;
+}
+
+.toast.success .toast-close,
+.toast.error .toast-close{
+  @apply translate-x-0 opacity-100;
+}
+
+.hidden-scroll::-webkit-scrollbar{
+  @apply hidden;
+}
+
+.custom-scroll::-webkit-scrollbar{
+  @apply w-[5px];
+}
+
+.custom-scroll::-webkit-scrollbar-thumb{
+  @apply w-[5px] rounded-lg bg-transparent;
+}
+
+.custom-scroll:hover::-webkit-scrollbar-thumb{
+  @apply bg-gray-100;
+}
+
+.sidebar{
+  @apply fixed md:static top-0 -left-1/2 flex flex-col bg-white min-h-screen py-4 border-r border-r-gray-300/40 opacity-0 md:opacity-100 invisible md:visible z-[5];
+}
+
+.aside__link{
+  @apply relative flex items-center gap-4 text-[11px] text-black hover:text-black/60 font-medium py-3 px-8 transition-all duration-200;
+}
+
+.aside__link.active{
+  @apply text-primary font-semibold before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-5 before:w-7 before:h-7 before:bg-primary before:rounded-lg before:rotate-45;
+}
+
+th{
+  @apply text-xs text-black uppercase font-semibold py-3 px-6 border border-gray-300/40;
+}
+
+td{
+  @apply text-[11px] text-black/60 font-semibold py-3 px-6;
+}
+
+.order-status{
+  @apply w-max flex items-center gap-2 text-[10px] text-emerald-600;
+}
+
+.filter-box{
+  @apply text-xs text-black py-2 px-4 border border-gray-300/40 hover:bg-gray-100 rounded-full transition-all duration-200;
+}
+
+.filter-box.active{
+  @apply bg-primary text-white border border-primary;
+}
+
+.orders-wrapper{
+  @apply fixed bottom-0 lg:top-14 right-0 flex flex-col w-[19rem] h-[calc(100vh-3.5rem)] lg:h-[calc(100vh-3.7rem)] bg-white py-6 px-6 rounded-none shadow-lg lg:shadow-none opacity-0 lg:opacity-100 invisible lg:visible;
+}
+
+.notif{
+  @apply flex items-center gap-2 py-3 px-6;
+}
+
+.notif.unread{
+  @apply bg-gray-100;
+}
+
+.size-option{
+  @apply text-[8px] font-semibold p-[2px] bg-gray-200 rounded-sm;
+}
+
+.size-option.active{
+  @apply bg-primary text-white;
+}
+
+.main-wrapper{
+  @apply w-[min(45rem,90%)] rounded-md p-6;
+}
+
+.summary-wrapper{
+  @apply w-full flex justify-center gap-3;
+}
+
+.order-view-card{
+  @apply w-[50%] md:w-[20%] bg-white rounded-xl p-4;
+}
+
+.order-stats{
+  @apply w-[min(25rem,100%)] bg-white rounded-md p-4 mt-3 mx-auto;
+}
+
+.stats-chart{
+  width: 100% !important;
+  height: 100% !important;
+}

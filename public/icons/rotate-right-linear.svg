@@ -1,0 +1,10 @@
+<svg id="rotate-right_linear" data-name="rotate-right/linear" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="vuesax_linear_rotate-right" data-name="vuesax/linear/rotate-right">
+    <g id="rotate-right">
+      <path id="Vector" d="M11.56.43A10.019,10.019,0,0,0,8.67,0a8.677,8.677,0,1,0,7.21,3.86" transform="translate(3.33 4.65)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      <path id="Vector-2" data-name="Vector" d="M2.89,3.32,0,0" transform="translate(13.24 2)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      <path id="Vector-3" data-name="Vector" d="M3.37,0,0,2.46" transform="translate(12.76 5.32)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      <path id="Vector-4" data-name="Vector" d="M0,0H24V24H0Z" transform="translate(24 24) rotate(180)" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,15 @@
+{
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Config\\": "config/"
+        }
+    },
+    "require": {
+        "mikecao/flight": "^2.0",
+        "gumlet/php-image-resize": "2.0.*",
+        "setasign/fpdi-tcpdf": "^2.3",
+        "vlucas/phpdotenv": "^5.5",
+        "ramsey/uuid": "^4.2"
+    }
+}

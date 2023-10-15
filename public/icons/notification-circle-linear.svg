@@ -1,0 +1,9 @@
+<svg id="notification-circle_linear" data-name="notification-circle/linear" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="vuesax_linear_notification-circle" data-name="vuesax/linear/notification-circle">
+    <g id="notification-circle">
+      <path id="Vector" d="M6,3A3,3,0,1,1,3,0,3,3,0,0,1,6,3Z" transform="translate(16 2)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+      <path id="Vector-2" data-name="Vector" d="M12.02.2A10.4,10.4,0,0,0,10,0a10,10,0,1,0,9.8,8.01" transform="translate(2 2)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+      <path id="Vector-3" data-name="Vector" d="M0,0H24V24H0Z" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>

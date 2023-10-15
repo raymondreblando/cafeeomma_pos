@@ -1,0 +1,12 @@
+<svg id="sales" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="vuesax_linear_money-recive" data-name="vuesax/linear/money-recive">
+    <g id="Group">
+      <path id="Vector" d="M0,5.26A1.711,1.711,0,0,0,1.67,7.01H3.55A1.489,1.489,0,0,0,5,5.48a1.321,1.321,0,0,0-.99-1.45L1,2.98A1.314,1.314,0,0,1,.01,1.53,1.5,1.5,0,0,1,1.46,0H3.34A1.711,1.711,0,0,1,5.01,1.75" transform="translate(9.5 8.49)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      <path id="Vector-2" data-name="Vector" d="M0,0V9" transform="translate(12 7.5)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    </g>
+    <path id="Vector-3" data-name="Vector" d="M20,10A10,10,0,1,1,10,0" transform="translate(2 2)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path id="Vector-4" data-name="Vector" d="M0,0V4H4" transform="translate(17 3)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path id="Vector-5" data-name="Vector" d="M5,0,0,5" transform="translate(17 2)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path id="Vector-6" data-name="Vector" d="M0,0H24V24H0Z" fill="none" opacity="0"/>
+  </g>
+</svg>

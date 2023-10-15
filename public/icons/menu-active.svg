@@ -1,0 +1,10 @@
+<svg id="menu-active" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="vuesax_linear_3dcube" data-name="vuesax/linear/3dcube">
+    <g id="_3dcube" data-name="3dcube">
+      <path id="Vector" d="M8.92.233l6.51,3.51a1.153,1.153,0,0,1,0,1.99L8.92,9.243a1.936,1.936,0,0,1-1.84,0L.57,5.733a1.153,1.153,0,0,1,0-1.99L7.08.233A1.936,1.936,0,0,1,8.92.233Z" transform="translate(4 2.027)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      <path id="Vector-2" data-name="Vector" d="M1.61.12,7.66,3.15A2.238,2.238,0,0,1,8.89,5.14v5.72a1.109,1.109,0,0,1-1.61.99L1.23,8.82A2.238,2.238,0,0,1,0,6.83V1.11A1.109,1.109,0,0,1,1.61.12Z" transform="translate(2 10.01)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      <path id="Vector-3" data-name="Vector" d="M7.28.12,1.23,3.15A2.238,2.238,0,0,0,0,5.14v5.72a1.109,1.109,0,0,0,1.61.99L7.66,8.82A2.238,2.238,0,0,0,8.89,6.83V1.11A1.109,1.109,0,0,0,7.28.12Z" transform="translate(13.11 10.01)" fill="none" stroke="#5138ee" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      <path id="Vector-4" data-name="Vector" d="M0,0H24V24H0Z" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>
