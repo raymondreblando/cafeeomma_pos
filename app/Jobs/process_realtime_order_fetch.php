@@ -30,26 +30,35 @@ if($helper->rowCount() > 0){
           <p class="text-[8px] font-semibold text-black/60 mb-3">'.$order->category_name.'</p>
       ';
 
+      $response .= '<div class="flex items-center justify-between gap-3 mb-3">';
+      
       if(!empty($order->size_id)){
 
         $helper->query("SELECT * FROM `sizes` WHERE `size_id` = ?", [$order->size_id]);
         $size_data = $helper->fetch();
 
-        $response .= '<p class="text-[10px] font-semibold text-black/60 mb-3">'.$size_data->size.'</p>';
+        $response .= '<p class="text-[10px] font-semibold text-black/60">'.$size_data->size.'</p>';
 
       } else{
 
-        $response .= '<p class="text-[10px] font-semibold text-black/60 mb-3">No size available</p>';
+        $response .= '<p class="text-[10px] font-semibold text-black/60">No size available</p>';
 
       }
+      $response .= '
+          <span class="w-6 h-6 rounded-full buy-btn bg-primary text-[10px] font-semibold text-center leading-6 text-white">x'.$order->quantity.'</span>
+        </div>
+      ';
 
       $response .= '
-          <div class="flex items-center justify-between gap-3">
+          <div class="flex justify-between gap-3">
             <div>
               <p class="text-[8px] font-semibold text-black/60">Price</p>
-              <p class="text-[10px] font-bold text-black">P'.$order->amount.'</p>
+              <p class="text-[10px] font-bold text-black">P'.($order->amount + $order->vat).'</p>
             </div>
-            <span class="w-6 h-6 rounded-full buy-btn bg-primary text-[10px] font-semibold text-center leading-6 text-white">x'.$order->quantity.'</span>
+            <div>
+              <p class="text-[8px] font-semibold text-black/60">VAT</p>
+              <p class="text-[10px] font-bold text-black">P'.$order->vat .'</p>
+            </div>
           </div>
         </div>
       ';
@@ -58,7 +67,8 @@ if($helper->rowCount() > 0){
 
     $helper->query("SELECT * FROM `cart_summary`");
     $summary_data = $helper->fetch();
-
+    $order_change = $summary_data->order_change > 0 ? $summary_data->order_change : 0;
+ 
     $response .= '
       </div>
       <div class="order-stats">
@@ -80,7 +90,7 @@ if($helper->rowCount() > 0){
         </div>
         <div class="flex justify-between gap-2 py-2">
           <p class="text-xs font-bold text-black">Change</p>
-          <p class="text-xs font-bold text-black">P'.$summary_data->order_change.'</p>
+          <p class="text-xs font-bold text-black">P'.$order_change.'</p>
         </div>
       </div>
     </div>

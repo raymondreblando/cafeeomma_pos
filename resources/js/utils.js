@@ -20,7 +20,6 @@ async function request(
     }
     
     const responseData = await response.json();
-    // const responseData = await response.text();
 
     if(button !== null)
       disabled(button, 'enabled');
@@ -41,6 +40,7 @@ async function request(
       onSuccess();
     }
     
+    // const responseData = await response.text();
     // console.log(responseData);
   } catch (error) {
     toast(error, 'error');

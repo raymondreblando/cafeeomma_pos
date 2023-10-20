@@ -9,7 +9,7 @@ use App\Utils\Utilities;
     <button type="button" class="show-sidebar block md:hidden font-semibold"><i class="ri-menu-5-line"></i></button>
     <div class="flex-1 sm:flex-initial flex items-center gap-3 px-4 bg-gray-100 py-2 rounded-full">
       <img src="<?php echo SYSTEM_URL ?>public/icons/search-normal-linear.svg" alt="search" class="w-4 h-4">
-      <input type="text" id="search-input" class="text-[11px] placeholder:text-black/60 bg-transparent" placeholder="Search something..." autocomplete="off">
+      <input type="text" id="search-input" class="text-[11px] placeholder:text-black/60 bg-transparent" placeholder="Search" autocomplete="off">
     </div>
   </div>
   <div class="flex items-center gap-2">
@@ -21,7 +21,7 @@ use App\Utils\Utilities;
         $helper->query("SELECT * FROM `notifications` WHERE `status` = ?", ["Unread"]);
         $unread_count = $helper->rowCount();
 
-        $helper->query("SELECT * FROM `notifications` n LEFT JOIN `menus` m ON n.menu_id=m.menu_id ORDER BY n.id DESC");
+        $helper->query("SELECT * FROM `notifications` ORDER BY `id` DESC");
         $notifications = $helper->fetchAll();
         
       ?>
@@ -45,13 +45,24 @@ use App\Utils\Utilities;
 
             <div class="custom-scroll max-h-[210px] overflow-y-auto">
 
-            <?php foreach($notifications as $notification): ?>
+            <?php 
+              foreach($notifications as $notification): 
+                if ($notification->notif_type == "Menu") {
+                  $helper->query("SELECT * FROM `menus` WHERE `menu_id` = ?", [$notification->referrence_id]);
+                } else {
+                  $helper->query("SELECT * FROM `ingredients` WHERE `ing_id` = ?", [$notification->referrence_id]);
+                }
+                
+                $referrenceData = $helper->fetch();
+            ?>
 
               <div class="notif <?= $notification->status == "Unread" ? "unread" : "" ?>">
-                <p class="text-[9px] font-semibold text-black/60 leading-snug"><span class="text-primary"><?= $notification->menu_name ?></span> stocks is getting low. Restock now.</p>
+                <p class="text-[9px] font-semibold text-black/60 leading-snug"><span class="text-primary"><?= $notification == "Menu" ? $referrenceData->menu_name : $referrenceData->ing_name ?></span> stocks is getting low. Restock now.</p>
               </div>
 
-            <?php endforeach ?>
+            <?php 
+              endforeach 
+            ?>
 
             </div>
 

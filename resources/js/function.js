@@ -306,3 +306,48 @@ function pagination(elem, elemType, $max){
   
   showPage(currentPage);
 }
+
+function dateSearch(startDate, endDate, type){
+  const searchAreas = document.querySelectorAll('.search-area');
+
+  searchAreas.forEach(searchArea => {
+    const finder = searchArea.querySelector('.dateFinder');
+    const saleDate = new Date(finder.textContent.trim());
+
+    if(saleDate >= startDate && saleDate <= endDate){
+      type === "table" ?
+      searchArea.style.display = 'table-row' 
+      : searchArea.style.display = 'block';
+    } else {
+      searchArea.style.display = 'none';
+    }
+  });
+}
+
+function appendSizes(parentContainer, size){
+  const parentEl = document.querySelector(parentContainer);
+  const ingredientSelects = document.querySelectorAll(".ingredient-select");
+  const sizeWrapper = document.createElement("div");
+  const p = document.createElement("p");
+  p.className = "text-[10px] text-black/60 font-semibold pl-2 mb-3";
+  p.textContent = `${size} Ingredient Amount`;
+  sizeWrapper.appendChild(p);
+  
+  const sizeGrid = document.createElement("div");
+  sizeGrid.className = "grid grid-cols-2 gap-3 mb-3";
+
+  ingredientSelects.forEach((ingredient, index) => {
+    const inputWrapper = document.createElement("div");
+    inputWrapper.className = "flex items-center h-10 bg-light-gray rounded-full px-6 mb-3";
+    const input = document.createElement("input");
+    input.setAttribute("type", "text");
+    input.setAttribute("name", `${size}[]`);
+    input.setAttribute("placeholder", `Ingredient ${index + 1} amount (eg. 10 ml)`);
+    input.className = "w-full h-full text-[10px] font-medium text-black placeholder:text-black/60 bg-transparent";
+    inputWrapper.appendChild(input);
+    sizeGrid.appendChild(inputWrapper);
+  })
+
+  sizeWrapper.appendChild(sizeGrid);
+  parentEl.appendChild(sizeWrapper);
+}

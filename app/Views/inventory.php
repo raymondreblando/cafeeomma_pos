@@ -23,17 +23,21 @@
       <?php require('./app/Views/partials/_topnav.php') ?>
 
       <div class="pt-20 md:pt-5 pb-5 px-8">
-        <div class="flex items-center justify-between gap-4 mb-4">
-          <select class="filter-select appearance-none w-[10rem] h-10 bg-white text-[10px] font-medium text-black px-4 rounded-md">
-            <option value="">Filter by category</option>
-
-            <?php foreach($categoryController->show() as $category): ?>
-
-            <option value="<?= $category->category_id ?>"><?= $category->category_name ?></option>
-
-            <?php endforeach ?>
-
-          </select>
+        <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+          <div class="flex items-center flex-wrap gap-3">
+            <a href="<?php  echo SYSTEM_URL ?>menu-inventory" class="inv_link <?= $title === 'Inventory' ? 'active' : '' ?>">Menus</a>
+            <a href="<?php  echo SYSTEM_URL ?>ingredient-inventory" class="inv_link <?= $title === 'Ingredients' ? 'active' : '' ?>">Ingredients</a>
+            <select class="filter-select appearance-none w-[10rem] h-10 bg-white text-[10px] font-medium text-black px-4 rounded-md">
+              <option value="">Filter by category</option>
+  
+              <?php foreach($categoryController->show() as $category): ?>
+  
+              <option value="<?= $category->category_id ?>"><?= $category->category_name ?></option>
+  
+              <?php endforeach ?>
+  
+            </select>
+          </div>
           <a href="<?php echo SYSTEM_URL ?>add-inventory" class="w-max h-10 flex items-center gap-2 bg-primary text-xs text-white py-2 px-4 rounded-full">
             <i class="ri-add-line"></i>
             <p class="text-[10px]">Add New</p>
@@ -70,9 +74,9 @@
                     </div>
                   </td>
                   <td class="finder4 border border-gray-300/40">P<?= $inventory->menu_price ?></td>
-                  <td class="finder5 border border-gray-300/40"><?= $inventory->inventory_stocks ?></td>
-                  <td class="border border-gray-300/40">P<?= $inventory->inventory_value ?></td>
-                  <td class="finder6 border border-gray-300/40"><?= $inventory->reorder_level ?></td>
+                  <td class="finder5 border border-gray-300/40"><?= $inventory->inventory_stocks ? $inventory->inventory_stocks : "Not Applicable" ?></td>
+                  <td class="border border-gray-300/40"><?= $inventory->inventory_value > 0 ? "P" . $inventory->inventory_value : "Not Applicable" ?></td>
+                  <td class="finder6 border border-gray-300/40"><?= $inventory->reorder_level ? $inventory->reorder_level : "Not Applicable" ?></td>
                   <td class="border border-gray-300/40 border-r-0">
                     <a href="<?php echo SYSTEM_URL ?>inventory/<?= $inventory->inventory_id ?>" class="flex justify-center items-center gap-1 text-[9px] uppercase bg-light-gray text-black py-2 px-4 rounded-full">
                       <img src="<?php echo SYSTEM_URL ?>public/icons/rotate-right-linear.svg" alt="update" class="w-3 h-3">

@@ -10,7 +10,7 @@ Flight::route('/dashboard', function(){
     Flight::render('Views/dashboard.php');
 });
 
-Flight::route('/inventory', function(){
+Flight::route('/menu-inventory', function(){
     Flight::render('Views/inventory.php');
 });
 
@@ -20,6 +20,18 @@ Flight::route('/add-inventory', function(){
 
 Flight::route('/inventory/@id', function($id){
     Flight::render('Views/update-inventory.php', array('id' => $id));
+});
+
+Flight::route('/ingredient-inventory', function(){
+    Flight::render('Views/ingredient-inventory.php');
+});
+
+Flight::route('/add-ingredient', function(){
+    Flight::render('Views/add-ingredient.php');
+});
+
+Flight::route('/ingredient/@id', function($id){
+    Flight::render('Views/update-ingredient.php', array('id' => $id));
 });
 
 Flight::route('/category', function(){
@@ -38,7 +50,7 @@ Flight::route('/menu/@id', function($id){
     Flight::render('Views/update-menu.php', array('id' => $id));
 });
 
-Flight::route('/orders', function(){
+Flight::route('/sales', function(){
     Flight::render('Views/orders.php');
 });
 

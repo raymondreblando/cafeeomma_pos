@@ -25,7 +25,7 @@
 
       <div class="min-h-[calc(100vh-4.5rem)] flex items-center justify-center pt-20 md:pt-5 pb-5 px-8">
         <div class="w-[min(30rem,100%)] bg-white rounded-2xl p-6">
-          <a href="<?php echo SYSTEM_URL ?>orders" class="block w-fit text-xs font-medium text-black bg-light-gray py-2 px-4 rounded-full mb-4">
+          <a href="<?php echo SYSTEM_URL ?>sales" class="block w-fit text-xs font-medium text-black bg-light-gray py-2 px-4 rounded-full mb-4">
             <i class="ri-arrow-left-s-line"></i>
             Back
           </a>

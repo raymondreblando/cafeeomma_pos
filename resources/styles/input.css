@@ -43,7 +43,7 @@ select{
 }
 
 .toast{
-  @apply fixed top-[2.5rem] left-1/2 -translate-x-1/2 w-max z-30 rounded-md overflow-hidden shadow-lg invisible opacity-0 ease-linear duration-200;
+  @apply fixed top-[2.5rem] left-1/2 -translate-x-1/2 w-max z-40 rounded-md overflow-hidden shadow-lg invisible opacity-0 ease-linear duration-200;
 }
 
 .toast.success{
@@ -157,6 +157,22 @@ td{
 
 .order-stats{
   @apply w-[min(25rem,100%)] bg-white rounded-md p-4 mt-3 mx-auto;
+}
+
+.inv_link{
+  @apply h-10 grid place-items-center text-[10px] font-medium bg-white px-4 rounded-md;
+}
+
+.inv_link.active{
+  @apply bg-primary-theme text-primary font-semibold;
+}
+
+.inv_tabs{
+  @apply text-[11px] font-medium text-black/60 pb-2;
+}
+
+.inv_tabs.active{
+  @apply text-primary font-semibold border-b-2 border-primary;
 }
 
 .stats-chart{

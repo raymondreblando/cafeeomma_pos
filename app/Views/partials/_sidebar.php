@@ -23,7 +23,7 @@
         </a>
       </li>
       <li>
-        <a href="<?php echo SYSTEM_URL ?>inventory" class="group aside__link <?php echo $title == "Inventory" || $title == "Add Inventory" || $title == "Update Inventory" ? "active" : "" ?>">
+        <a href="<?php echo SYSTEM_URL ?>menu-inventory" class="group aside__link <?php echo $title == "Inventory" || $title == "Add Inventory" || $title == "Update Inventory" || $title == 'Ingredients' ? "active" : "" ?>">
           <img src="<?php echo SYSTEM_URL ?>public/icons/inventory-active.svg" alt="inventory" class="w-4 h-4 hidden group-[.active]:block">
           <img src="<?php echo SYSTEM_URL ?>public/icons/inventory.svg" alt="inventory" class="w-4 h-4 block group-[.active]:hidden">
           Inventory
@@ -47,10 +47,10 @@
         </a>
       </li>
       <li>
-        <a href="<?php echo SYSTEM_URL ?>orders" class="group aside__link <?php echo $title == "Orders" || $title == "Order Details" ? "active" : "" ?>">
+        <a href="<?php echo SYSTEM_URL ?>sales" class="group aside__link <?php echo $title == "Sales" || $title == "Order Details" ? "active" : "" ?>">
           <img src="<?php echo SYSTEM_URL ?>public/icons/order-active.svg" alt="order" class="w-4 h-4 hidden group-[.active]:block">
           <img src="<?php echo SYSTEM_URL ?>public/icons/order.svg" alt="order" class="w-4 h-4 block group-[.active]:hidden">
-          Orders
+          Sales
         </a>
       </li>
 

@@ -86,6 +86,40 @@ addEvent("#update-inventory-form", "submit", (e) => {
   new FormData(e.target), "create", "#update-inventory-btn");
 })
 
+addEvent("#save-inventorywing-form", "submit", (e) => {
+  e.preventDefault();
+  disabled("#save-inventorywing-btn", "disabled");
+
+  request(SYSTEM_URL + "app/Jobs/process_inventory_wingredients_save.php", () => {
+    e.target.reset();
+  }, new FormData(e.target), "create", "#save-inventorywing-btn");
+})
+
+addEvent("#update-inventorywing-form", "submit", (e) => {
+  e.preventDefault();
+  disabled("#update-inventorywing-btn", "disabled");
+
+  request(SYSTEM_URL + "app/Jobs/process_inventory_wingredients_update.php", () => {}, 
+  new FormData(e.target), "create", "#update-inventorywing-btn");
+})
+
+addEvent("#save-ingredient-form", "submit", (e) => {
+  e.preventDefault();
+  disabled("#save-ingredient-btn", "disabled");
+
+  request(SYSTEM_URL + "app/Jobs/process_ingredient_save.php", () => {
+    e.target.reset();
+  }, new FormData(e.target), "create", "#save-ingredient-btn");
+})
+
+addEvent("#update-ingredient-form", "submit", (e) => {
+  e.preventDefault();
+  disabled("#update-ingredient-btn", "disabled");
+
+  request(SYSTEM_URL + "app/Jobs/process_ingredient_update.php", () => {}, 
+  new FormData(e.target), "create", "#update-ingredient-btn");
+})
+
 addEvent("#create-account-form", "submit", (e) => {
   e.preventDefault();
   disabled("#create-account-btn", "disabled");
@@ -187,16 +221,30 @@ addEvent(".add-btn", "click", (e) => {
   { "Content-Type": "application/x-www-form-urlencoded" });
 }, "all")
 
-addEvent("#checkout-btn", "click", () => {
+addEvent("#confirm-checkout-btn", "click", () => {
   const discountSelect = document.querySelector("#discount-select");
   const cashInput = document.querySelector("#cash-input");
-  disabled("#checkout-btn", "disabled");
+  disabled("#confirm-checkout-btn", "disabled");
 
   request(SYSTEM_URL + "app/Jobs/process_order_create.php", () => {
     setTimeout(() => {
       location.reload();
     }, 1300);
-  }, "discount=" + discountSelect.value + "&cash=" + cashInput.value.trim(), "create", "#checkout-btn", 
+  }, "discount=" + discountSelect.value + "&cash=" + cashInput.value.trim(), "create", "#confirm-checkout-btn", 
+  { "Content-Type": "application/x-www-form-urlencoded" });
+})
+
+addEvent("#menu-select", "change", ({ target }) => {
+  request(SYSTEM_URL + "app/Jobs/process_fetching_menu_sizes.php", (data) => {
+    const sizeWrapper = document.querySelector(".menu-sizes-wrapper");
+    sizeWrapper.innerHTML = "";
+
+    const parseData = JSON.parse(data);
+
+    for (const content of parseData) {
+      appendSizes('.menu-sizes-wrapper', content.size);
+    }
+  }, "menu_id=" + target.value, "fetch", null, 
   { "Content-Type": "application/x-www-form-urlencoded" });
 })
 

@@ -22,47 +22,62 @@ class CartController
 
   public function insert(array $data): string
   {
-    if(isset($data['size_id']) && empty($data['size_id'])) return Utilities::response('error', 'Select a size');
-    if(empty($data['menu_id'])) return Utilities::response('error', 'An error occurred');
+    if (isset($data['size_id']) && empty($data['size_id'])) {
+      return Utilities::response('error', 'Select a size');
+    } 
+    if (empty($data['menu_id'])) {
+      return Utilities::response('error', 'An error occurred');
+    }
 
     $this->helper->query("SELECT * FROM `menus` WHERE `menu_id` = ?", [$data['menu_id']]);
-    if($this->helper->rowCount() < 1) return Utilities::response('error', 'An error occurred');
+
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'An error occurred');
+    }
 
     $menu_data = $this->helper->fetch();
 
-    if(isset($data['size_id']))
+    if (isset($data['size_id'])) {
       $this->helper->query("SELECT * FROM `cart` WHERE `menu_id` = ? AND `size_id` = ?", [$data['menu_id'], $data['size_id']]);
-    else
+    } else {
       $this->helper->query("SELECT * FROM `cart` WHERE `menu_id` = ?", [$data['menu_id']]);
-    if($this->helper->rowCount() > 0) return Utilities::response('error', 'Already added');
+    }
+      
+    if ($this->helper->rowCount() > 0) {
+      return Utilities::response('error', 'Already added');
+    } 
 
-    if(isset($data['size_id']) && !empty($data['size_id'])){
+    if (isset($data['size_id']) && !empty($data['size_id'])) {
       $this->helper->query("SELECT * FROM `sizes` WHERE `size_id` = ?", [$data['size_id']]);
       $size_data = $this->helper->fetch();
     }
 
     $amount = isset($size_data) ? $size_data->size_price : $menu_data->menu_price;
+    $vat = isset($size_data) ? $size_data->size_vat : $menu_data->menu_vat;
 
-    if(isset($data['size_id'])){
-      $this->helper->query("INSERT INTO `cart` (`cart_id`, `menu_id`, `quantity`, `amount`, `size_id`, `date_created`) VALUES (?, ?, ?, ?, ?, current_timestamp())", [Utilities::uuid(), $data['menu_id'], 1, $amount, $data['size_id']]);
-    } else{
-      $this->helper->query("INSERT INTO `cart` (`cart_id`, `menu_id`, `quantity`, `amount`, `date_created`) VALUES (?, ?, ?, ?, current_timestamp())", [Utilities::uuid(), $data['menu_id'], 1, $amount]);
+    if (isset($data['size_id'])) {
+      $this->helper->query("INSERT INTO `cart` (`cart_id`, `menu_id`, `quantity`, `amount`, `vat`, `size_id`, `date_created`) VALUES (?, ?, ?, ?, ?, ?, current_timestamp())", [Utilities::uuid(), $data['menu_id'], 1, $amount, $vat, $data['size_id']]);
+    } else {
+      $this->helper->query("INSERT INTO `cart` (`cart_id`, `menu_id`, `quantity`, `amount`, `vat`, `date_created`) VALUES (?, ?, ?, ?, ?, current_timestamp())", [Utilities::uuid(), $data['menu_id'], 1, $amount, $vat]);
     }
 
-    if($this->helper->rowCount() < 1) return Utilities::response('error', 'Item not added');
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'Item not added');
+    } 
 
     $total_amount = 0;
+    $total_vat = 0;
 
     $this->helper->query("SELECT * FROM `cart`");
 
-    foreach($this->helper->fetchAll() as $cart_item){
+    foreach ($this->helper->fetchAll() as $cart_item) {
       $total_amount += $cart_item->amount * $cart_item->quantity;
+      $total_vat +=  $cart_item->vat * $cart_item->quantity;
     }
 
-    $vat = number_format($total_amount * (5/100), 2);
-    $total_amount += $vat;
+    $total_amount += $total_vat;
 
-    $this->helper->query("UPDATE `cart_summary` SET `amount` = ?, `vat` = ?, `discount` = ?, `cash` = ?, `order_change` = ?", [$total_amount, $vat, 0, 0, 0]);
+    $this->helper->query("UPDATE `cart_summary` SET `amount` = ?, `vat` = ?, `discount` = ?, `cash` = ?, `order_change` = ?", [$total_amount, $total_vat, 0, 0, 0]);
 
     return Utilities::response('success', 'Menu added');
   }
@@ -82,16 +97,17 @@ class CartController
       $this->helper->query("UPDATE `cart` SET `quantity` = ? WHERE `cart_id` = ?", [$cart_data->quantity - 1, $data['cart_id']]);
 
       $total_amount = 0;
+      $total_vat = 0;
       $this->helper->query("SELECT * FROM `cart`");
 
       foreach($this->helper->fetchAll() as $cart_item){
         $total_amount += $cart_item->amount * $cart_item->quantity;
+        $total_vat +=  $cart_item->vat * $cart_item->quantity;
       }
 
-      $vat = number_format($total_amount * (5/100), 2);
-      $total_amount += $vat;
+      $total_amount += $total_vat;
 
-      $this->helper->query("UPDATE `cart_summary` SET `amount` = ?, `vat` = ?, `discount` = ?, `cash` = ?, `order_change` = ?", [$total_amount, $vat, 0, 0, 0]);
+      $this->helper->query("UPDATE `cart_summary` SET `amount` = ?, `vat` = ?, `discount` = ?, `cash` = ?, `order_change` = ?", [$total_amount, $total_vat, 0, 0, 0]);
 
       return Utilities::response('success', 'success');
     }
@@ -100,16 +116,17 @@ class CartController
       $this->helper->query("DELETE FROM `cart` WHERE `cart_id` = ?", [$data['cart_id']]);
 
       $total_amount = 0;
+      $total_vat = 0;
       $this->helper->query("SELECT * FROM `cart`");
 
       foreach($this->helper->fetchAll() as $cart_item){
         $total_amount += $cart_item->amount * $cart_item->quantity;
+        $total_vat +=  $cart_item->vat * $cart_item->quantity;
       }
 
-      $vat = number_format($total_amount * (5/100), 2);
-      $total_amount += $vat;
+      $total_amount += $total_vat;
 
-      $this->helper->query("UPDATE `cart_summary` SET `amount` = ?, `vat` = ?, `discount` = ?, `cash` = ?, `order_change` = ?", [$total_amount, $vat, 0, 0, 0]);
+      $this->helper->query("UPDATE `cart_summary` SET `amount` = ?, `vat` = ?, `discount` = ?, `cash` = ?, `order_change` = ?", [$total_amount, $total_vat, 0, 0, 0]);
 
       return Utilities::response('success', 'success');
     }
@@ -120,21 +137,40 @@ class CartController
     $this->helper->query("SELECT * FROM `inventory` WHERE `menu_id` = ?", [$cart_data->menu_id]);
     $inventory_data = $this->helper->fetch();
 
-    if(($item_count->item_count + 1) > $inventory_data->inventory_stocks) return Utilities::response('error', 'Stock left is '.($inventory_data->inventory_stocks - ($item_count->item_count)));
+    if ($inventory_data->inventory_value > 0) {
+      if(($item_count->item_count + 1) > $inventory_data->inventory_stocks) return Utilities::response('error', 'Stock left is '.($inventory_data->inventory_stocks - ($item_count->item_count)));
+    }
+
+    if (isset($cart_data->size_id)) {
+      $this->helper->query("SELECT * FROM `ingredient_cost` WHERE `menu_id` = ? AND `size_id` = ?", [$cart_data->menu_id, $cart_data->size_id]);
+      $sizeIngredients = $this->helper->fetchAll();
+
+      foreach ($sizeIngredients as $sizeIngredient) {
+        $totalUnit = $sizeIngredient->ing_amount * $cart_data->quantity;
+
+        $this->helper->query("SELECT * FROM `ingredients` WHERE `ing_id` = ?", [$sizeIngredient->ing_id]);
+        $ingredientData = $this->helper->fetch();
+
+        if ($totalUnit > $ingredientData->ing_stocks) {
+          return Utilities::response('error', 'Insufficient ingredients');
+        }
+      }
+    }
 
     $this->helper->query("UPDATE `cart` SET `quantity` = ? WHERE `cart_id` = ?", [$cart_data->quantity + 1, $data['cart_id']]);
 
     $total_amount = 0;
+    $total_vat = 0;
     $this->helper->query("SELECT * FROM `cart`");
 
     foreach($this->helper->fetchAll() as $cart_item){
       $total_amount += $cart_item->amount * $cart_item->quantity;
+      $total_vat +=  $cart_item->vat * $cart_item->quantity;
     }
 
-    $vat = number_format($total_amount * (5/100), 2);
-    $total_amount += $vat;
+    $total_amount += $total_vat;
 
-    $this->helper->query("UPDATE `cart_summary` SET `amount` = ?, `vat` = ?, `discount` = ?, `cash` = ?, `order_change` = ?", [$total_amount, $vat, 0, 0, 0]);
+    $this->helper->query("UPDATE `cart_summary` SET `amount` = ?, `vat` = ?, `discount` = ?, `cash` = ?, `order_change` = ?", [$total_amount, $total_vat, 0, 0, 0]);
 
     return Utilities::response('success', 'success');
   }

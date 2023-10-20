@@ -10,6 +10,7 @@ use Config\Database;
 use App\Utils\DbHelper;
 use App\Providers\AuthProvider;
 use App\Controllers\InventoryController;
+use App\Controllers\IngredientController;
 use App\Controllers\CategoryController;
 use App\Controllers\MenuController;
 use App\Controllers\CartController;
@@ -25,6 +26,7 @@ $conn = $database->getConnetion($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_US
 $helper = new DbHelper($conn);
 $authProvider = new AuthProvider($helper);
 $inventoryController = new InventoryController($helper);
+$ingredientController = new IngredientController($helper);
 $categoryController = new CategoryController($helper);
 $menuController = new MenuController($helper);
 $cartController = new CartController($helper);

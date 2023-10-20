@@ -69,4 +69,109 @@ class InventoryController implements AppInterface
     
     return Utilities::response('success', 'Inventory saved');
   }
+
+  public function insertWithIngredients(array $data): string
+  {
+    $inventory_id = Utilities::uuid();
+    $menu_id = Utilities::sanitize($data["menu"]);
+    $ingredients = $data['ingredients'];
+    $ingredientCount = count($ingredients);
+
+    foreach ($ingredients as $ingredient) {
+      if (empty($ingredient)) {
+        return Utilities::response('error', 'Select an ingredient');
+      }
+    }
+
+    if (empty($menu_id)) {
+      return Utilities::response('error', 'Select a menu');
+    }
+
+    $this->helper->startTransaction();
+
+    $this->helper->query("INSERT INTO `inventory` (`inventory_id`, `menu_id`, `date_created`) VALUES (?, ?, current_timestamp())", [$inventory_id, $menu_id]);
+    
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'Item cannot be added');
+    }
+
+    $this->helper->query("SELECT * FROM `sizes` WHERE `menu_id` = ?", [$menu_id]);
+    $sizes = $this->helper->fetchAll();
+
+    if (count($sizes) < 1) {
+      $this->helper->rollback();
+      return Utilities::response('error', 'Ingredient is applicable for the item');
+    }
+
+    foreach ($sizes as $size) {
+      $sizeIngredientAmounts = $data[$size->size];
+      for ($index = 0; $index < $ingredientCount; $index++){
+        if (empty($sizeIngredientAmounts[$index])) {
+          $this->helper->rollback();
+          return Utilities::response('error', 'All size ingredient amount is required');
+        }
+
+        preg_match('/(\d+)\s*([a-zA-Z]+)/', $sizeIngredientAmounts[$index], $matches);
+        $ingAmount = $matches[1];
+        $formattedUnit = Utilities::getEquivalentUnitName($matches[2]);
+        $ingFinalValue = Utilities::convertUnit($ingAmount, $formattedUnit);
+
+        $this->helper->query("INSERT INTO `ingredient_cost` (`menu_id`, `size_id`, `ing_id`, `ing_amount`, `ing_unit`) VALUES (?, ?, ?, ?, ?)", [$menu_id, $size->size_id, $ingredients[$index], $ingFinalValue, $formattedUnit]);
+
+        if ($this->helper->rowCount() < 1) {
+          $this->helper->rollback();
+          return Utilities::response('error', 'Item cannot be added');
+        }
+      }
+    }
+    
+    $this->helper->commit();
+    return Utilities::response('success', 'Inventory saved');
+  }
+
+  public function updateWithIngredients(array $data): string
+  {
+    $inventory_id = Utilities::sanitize($data["iid"]);
+    $menu_id = Utilities::sanitize($data["menu"]);
+
+    if (empty($menu_id)) {
+      return Utilities::response('error', 'Select a menu');
+    }
+
+    $this->helper->startTransaction();
+
+    $this->helper->query("UPDATE `inventory` SET `menu_id` = ? WHERE `inventory_id` = ?", [$menu_id, $inventory_id]);
+
+    $this->helper->query("SELECT * FROM `sizes` WHERE `menu_id` = ?", [$menu_id]);
+    $sizes = $this->helper->fetchAll();
+
+    if (count($sizes) < 1) {
+      $this->helper->rollback();
+      return Utilities::response('error', 'Ingredient is applicable for the item');
+    }
+
+    
+    foreach ($sizes as $size) {
+      $this->helper->query("SELECT * FROM `ingredient_cost` WHERE `menu_id` = ? AND `size_id` = ?", [$menu_id, $size->size_id]);
+      $ingredientCosts = $this->helper->fetchAll();
+      $sizeIngredientAmounts = $data[$size->size];
+
+      foreach ($ingredientCosts as $index => $cost) {
+        if (empty($sizeIngredientAmounts[$index])) {
+          $this->helper->rollback();
+          return Utilities::response('error', 'All size ingredient amount is required');
+        }
+
+        preg_match('/(\d+)\s*([a-zA-Z]+)/', $sizeIngredientAmounts[$index], $matches);
+        $ingAmount = $matches[1];
+        $formattedUnit = Utilities::getEquivalentUnitName($matches[2]);
+        $ingFinalValue = Utilities::convertUnit($ingAmount, $formattedUnit);
+
+        $this->helper->query("UPDATE `ingredient_cost` SET `ing_amount` = ?, `ing_unit` = ? WHERE `id` = ?", [$ingFinalValue, $formattedUnit, $cost->id]);
+      }
+    }
+    
+    $this->helper->commit();
+    return Utilities::response('success', 'Inventory saved');
+  }
 }

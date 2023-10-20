@@ -166,8 +166,10 @@ addEvent("#discount-select", "change", ({ target }) => {
   const discountTxt = document.querySelector("#discount");
   const totalAmount = document.querySelector("#total-amount");
   const totalAmountValue = parseFloat(totalAmount.dataset.id);
+  const highPriceOrderAmount = document.querySelector("#highest-amount");
+  const highPriceOrderValue = parseFloat(highPriceOrderAmount.dataset.id);
 
-  let discount = (totalAmountValue * parseFloat(target.value)).toFixed(2);
+  let discount = (highPriceOrderValue * parseFloat(target.value)).toFixed(2);
   let finalValue = (totalAmountValue - discount).toFixed(2);
 
   totalAmount.textContent = `P${finalValue}`;
@@ -211,6 +213,59 @@ addEvent("#cash-input", "keyup", ({ target }) => {
   formData, "fetch");
 })
 
-addEvent("#date-filter", "change", ({ target }) => {
-  search(target.value, "table");
+addEvent("#checkout-btn", "click", () => {
+  dynamicStyling(".dialog", "hidden", "remove");
+})
+
+addEvent(".close-dialog-btn", "click", () => {
+  dynamicStyling(".dialog", "hidden", "add");
+})
+
+addEvent("#start-date-filter", "change", ({ target }) => {
+  const endDateInput = document.querySelector("#end-date-filter");
+
+  if(endDateInput.value !== null && endDateInput.value !== ''){
+    const startDate = new Date(target.value);
+    const endDate = new Date(endDateInput.value);
+    dateSearch(startDate, endDate, 'table');
+    return
+  } 
+    
+  search(target.value, 'table');
+})
+
+addEvent("#end-date-filter", "change", ({ target }) => {
+  const startDateInput = document.querySelector("#start-date-filter");
+
+  if(startDateInput.value === null || startDateInput.value === ''){
+    startDateInput.value = null;
+    toast('Select a start date', 'error');
+    return;
+  }
+
+  const startDate = new Date(startDateInput.value);
+  const endDate = new Date(target.value);
+  dateSearch(startDate, endDate, 'table');
+})
+
+addEvent(".inv_tabs", "click", ({ target }) => {
+  dynamicStyling(".inv_tabs", "active", "remove");
+  target.classList.add("active");
+  const txtContent = target.textContent.trim();
+  const noIngredientForm = document.querySelector("#save-inventory-form");
+  const withIngredientForm = document.querySelector("#save-inventorywing-form");
+
+  if(txtContent === "No Ingredients"){
+    noIngredientForm.classList.remove('hidden');
+    withIngredientForm.classList.add('hidden');
+  } else {
+    withIngredientForm.classList.remove('hidden');
+    noIngredientForm.classList.add('hidden');
+  }
+}, 'all')
+
+addEvent(".add-ingredient", "click", () => {
+  const ingredientWrapper = document.querySelector(".ingredient-wrapper");
+  const ingredientSelect = document.querySelector(".ingredient-select");
+  ingredientWrapper.appendChild(ingredientSelect.cloneNode(true));
 })

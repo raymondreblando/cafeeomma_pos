@@ -37,40 +37,55 @@ class MenuController extends FileUpload implements AppInterface
     unset($data['size']);
     unset($data['size_price']);
 
-    foreach($data as $field){
+    foreach ($data as $field) {
       if(empty($field)) return Utilities::response('error', 'All fields are required');
     }
 
-    if(isset($sizes)){
-      foreach($sizes as $size){
-        if(empty($size)) return Utilities::response('error', 'Enter the size');
+    if (isset($sizes)) {
+      foreach ($sizes as $size) {
+        if (empty($size)) {
+          return Utilities::response('error', 'Enter the size');
+        } 
       }
     }
 
-    if(isset($size_prices)){
-      foreach($size_prices as $size_price){
-        if(empty($size_price)) return Utilities::response('error', 'Enter the size price');
+    if (isset($size_prices)) {
+      foreach ($size_prices as $size_price) {
+        if (empty($size_price)) {
+          return Utilities::response('error', 'Enter the size price');
+        } 
       }
     }
 
     $this->helper->query("SELECT * FROM `menus` WHERE `menu_name` = ?", [$data['menu_name']]);
-    if($this->helper->rowCount() > 0) return Utilities::response('error', 'Menu exist');
+    if ($this->helper->rowCount() > 0) {
+      return Utilities::response('error', 'Menu exist');
+    } 
 
     $this->setFile($_FILES['menu_img']);
 
-    if(!$this->isUploading()) return Utilities::response('error', 'Upload menu image');
+    if (!$this->isUploading()) {
+      return Utilities::response('error', 'Upload menu image');
+    } 
 
     $menu_id = Utilities::uuid();
+    $menu_vat = Utilities::calculateVat($data['menu_price']);
     $this->helper->startTransaction();
 
-    $this->helper->query("INSERT INTO `menus` (`menu_id`, `menu_name`, `menu_price`, `category_id`, `date_created`) VALUES (?, ?, ?, ?, current_timestamp())", [$menu_id, $data['menu_name'], $data['menu_price'], $data['category']]);
-    if($this->helper->rowCount() < 1) return Utilities::response('error', 'Menu not saved');
+    $this->helper->query("INSERT INTO `menus` (`menu_id`, `menu_name`, `menu_price`, `menu_vat`, `category_id`, `date_created`) VALUES (?, ?, ?, ?, ?, current_timestamp())", [$menu_id, $data['menu_name'], $data['menu_price'], $menu_vat, $data['category']]);
 
-    if(isset($sizes) && !empty($sizes[0])){
-      foreach($sizes as $key => $value){
-        $this->helper->query("INSERT INTO `sizes` (`size_id`, `menu_id`, `size`, `size_price`, `date_created`) VALUES (?, ?, ?, ?, current_timestamp())", [Utilities::uuid(), $menu_id, $sizes[$key], $size_prices[$key]]);
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'Menu not saved');
+    } 
 
-        if($this->helper->rowCount() < 1){
+    if (isset($sizes) && !empty($sizes[0])) {
+      foreach ($sizes as $key => $value) {
+        $size_id = Utilities::uuid();
+        $size_vat = Utilities::calculateVat($size_prices[$key]);
+
+        $this->helper->query("INSERT INTO `sizes` (`size_id`, `menu_id`, `size`, `size_price`, `size_vat`, `date_created`) VALUES (?, ?, ?, ?, ?, current_timestamp())", [$size_id, $menu_id, $sizes[$key], $size_prices[$key], $size_vat]);
+
+        if ($this->helper->rowCount() < 1) {
           $this->helper->rollback();
           return Utilities::response('error', 'Menu not saved');
         } 
@@ -78,7 +93,7 @@ class MenuController extends FileUpload implements AppInterface
     }
 
     $file = $menu_id.".png";
-    if(!$this->isUploadSuccess($file)){
+    if (!$this->isUploadSuccess($file)) {
       $this->helper->rollback();
       return Utilities::response('error', 'Menu not saved');
     }
@@ -96,34 +111,45 @@ class MenuController extends FileUpload implements AppInterface
     unset($data['size']);
     unset($data['size_price']);
 
-    foreach($data as $field){
-      if(empty($field)) return Utilities::response('error', 'All fields are required');
+    foreach ($data as $field) {
+      if (empty($field)) {
+        return Utilities::response('error', 'All fields are required');
+      } 
     }
 
-    if(isset($sizes)){
-      foreach($sizes as $size){
-        if(empty($size)) return Utilities::response('error', 'Enter the size');
+    if (isset($sizes)) {
+      foreach ($sizes as $size) {
+        if (empty($size)) {
+          return Utilities::response('error', 'Enter the size');
+        } 
       }
     }
 
-    if(isset($size_prices)){
-      foreach($size_prices as $size_price){
-        if(empty($size_price)) return Utilities::response('error', 'Enter the size price');
+    if (isset($size_prices)) {
+      foreach ($size_prices as $size_price) {
+        if (empty($size_price)) {
+          return Utilities::response('error', 'Enter the size price');
+        } 
       }
     }
 
     $this->helper->query("SELECT * FROM `menus` WHERE `menu_name` = ? AND NOT `menu_id` = ?", [$data['menu_name'], $data['mid']]);
-    if($this->helper->rowCount() > 0) return Utilities::response('error', 'Menu exist');
+    if ($this->helper->rowCount() > 0) {
+      return Utilities::response('error', 'Menu exist');
+    } 
 
     $this->setFile($_FILES['menu_img']);
 
+    $menu_vat = Utilities::calculateVat($data['menu_price']);
     $this->helper->startTransaction();
 
-    $this->helper->query("UPDATE `menus` SET `menu_name` = ?, `menu_price` = ?, `category_id` = ? WHERE `menu_id` = ?", [$data['menu_name'], $data['menu_price'], $data['category'], $data['mid']]);
+    $this->helper->query("UPDATE `menus` SET `menu_name` = ?, `menu_price` = ?, `menu_vat` = ?,  `category_id` = ? WHERE `menu_id` = ?", [$data['menu_name'], $data['menu_price'], $menu_vat, $data['category'], $data['mid']]);
 
-    if(isset($sizes) && !empty($sizes[0])){
-      foreach($sizes as $key => $value){
-        $this->helper->query("UPDATE `sizes` SET `size` = ?, `size_price` = ? WHERE `menu_id` = ? AND `size_id` = ?", [$sizes[$key], $size_prices[$key], $data['mid'], $size_ids[$key]]);
+    if (isset($sizes) && !empty($sizes[0])) {
+      foreach ($sizes as $key => $value) {
+        $size_vat = Utilities::calculateVat($size_prices[$key]);
+
+        $this->helper->query("UPDATE `sizes` SET `size` = ?, `size_price` = ?, `size_vat` = ? WHERE `menu_id` = ? AND `size_id` = ?", [$sizes[$key], $size_prices[$key], $size_vat, $data['mid'], $size_ids[$key]]);
       }
     }
 

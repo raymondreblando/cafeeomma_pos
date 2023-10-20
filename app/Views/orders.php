@@ -1,7 +1,7 @@
 <?php
 
   require_once __DIR__.'/../../config/init.php';
-  $title = "Orders";
+  $title = "Sales";
 
   use App\Utils\Utilities;
 
@@ -22,9 +22,13 @@
       <?php require('./app/Views/partials/_topnav.php') ?>
 
       <div class="pt-20 md:pt-5 pb-5 px-8">
-        <div class="flex items-center justify-between gap-4 mb-4">
+        <div class="flex items-center gap-4 mb-4">
           <div class="relative flex-1 md:flex-initial h-10 px-4 bg-white rounded-md">
-            <input type="date" id="date-filter" class="w-full h-full text-[10px] font-medium text-dark bg-transparent uppercase">
+            <input type="date" id="start-date-filter" class="w-full h-full text-[10px] font-medium text-dark bg-transparent uppercase">
+            <img src="<?php echo SYSTEM_URL ?>public/icons/calendar-linear.svg" alt="calendar" class="absolute top-1/2 -translate-y-1/2 right-4 bg-white w-3 h-3 pointer-events-none">
+          </div>
+          <div class="relative flex-1 md:flex-initial h-10 px-4 bg-white rounded-md">
+            <input type="date" id="end-date-filter" class="w-full h-full text-[10px] font-medium text-dark bg-transparent uppercase">
             <img src="<?php echo SYSTEM_URL ?>public/icons/calendar-linear.svg" alt="calendar" class="absolute top-1/2 -translate-y-1/2 right-4 bg-white w-3 h-3 pointer-events-none">
           </div>
         </div>
@@ -40,7 +44,6 @@
                 <th class="text-[10px] border-t-0">VAT</th>
                 <th class="text-[10px] border-t-0">Cash</th>
                 <th class="text-[10px] border-t-0">Change</th>
-                <th class="text-[10px] border-t-0">Status</th>
                 <th class="text-[10px] border-t-0">Date</th>
                 <th width="10%" class="text-[10px] border-r-0 border-t-0"></th>
               </thead>
@@ -55,14 +58,8 @@
                   <td class="border border-gray-300/40">P<?= $order->vat ?></td>
                   <td class="finder4 border border-gray-300/40">P<?= $order->cash ?></td>
                   <td class="border border-gray-300/40">P<?= $order->order_change ?></td>
-                  <td class="border border-gray-300/40">
-                    <div class="order-status">
-                      <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                      <?= $order->order_status ?>
-                    </div>
-                  </td>
                   <td class="finder5 border border-gray-300/40"><?= Utilities::formatDate($order->date_added, "M d, Y h:i A") ?></td>
-                  <td class="finder6 hidden"><?= Utilities::formatDate($order->date_added, "Y-m-d") ?></td>
+                  <td class="finder6 dateFinder hidden"><?= Utilities::formatDate($order->date_added, "Y-m-d") ?></td>
                   <td class="border border-gray-300/40 border-r-0">
                     <a href="<?php echo SYSTEM_URL ?>order/<?= $order->order_id ?>" class="flex justify-center items-center gap-1 text-[9px] uppercase bg-light-gray text-black py-2 px-4 rounded-full">
                       <img src="<?php echo SYSTEM_URL ?>public/icons/tag-2-linear.svg" alt="items" class="w-3 h-3">
