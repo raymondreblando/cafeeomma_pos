@@ -663,8 +663,20 @@ video {
   margin-top: auto;
 }
 
+.ml-1{
+  margin-left: 0.25rem;
+}
+
+.ml-2{
+  margin-left: 0.5rem;
+}
+
 .block{
   display: block;
+}
+
+.inline-block{
+  display: inline-block;
 }
 
 .flex{
@@ -673,6 +685,10 @@ video {
 
 .table{
   display: table;
+}
+
+.inline-table{
+  display: inline-table;
 }
 
 .grid{
@@ -886,6 +902,14 @@ video {
   width: max-content;
 }
 
+.w-\[8rem\]{
+  width: 8rem;
+}
+
+.w-\[9rem\]{
+  width: 9rem;
+}
+
 .max-w-\[400px\]{
   max-width: 400px;
 }
@@ -1070,11 +1094,6 @@ video {
 
 .bg-black\/60{
   background-color: rgb(0 0 0 / 0.6);
-}
-
-.bg-emerald-600{
-  --tw-bg-opacity: 1;
-  background-color: rgb(5 150 105 / var(--tw-bg-opacity));
 }
 
 .bg-gray-100{
@@ -1769,21 +1788,35 @@ td{
 .summary-wrapper{
   display: flex;
   width: 100%;
+  flex-direction: column;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
 }
 
+@media (min-width: 640px){
+  .summary-wrapper{
+    flex-direction: row;
+  }
+}
+
 .order-view-card{
-  width: 50%;
+  width: 100%;
   border-radius: 0.75rem;
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
   padding: 1rem;
 }
 
+@media (min-width: 640px){
+  .order-view-card{
+    width: 48%;
+  }
+}
+
 @media (min-width: 768px){
   .order-view-card{
-    width: 20%;
+    width: 18.5%;
   }
 }
 
@@ -1870,12 +1903,45 @@ td{
   cursor: wait;
 }
 
+.group:hover .group-hover\:hidden{
+  display: none;
+}
+
+.group:hover .group-hover\:rotate-45{
+  --tw-rotate: 45deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .group.active .group-\[\.active\]\:block{
   display: block;
 }
 
 .group.active .group-\[\.active\]\:hidden{
   display: none;
+}
+
+.group.th-sort-desc .group-\[\.th-sort-desc\]\:hidden{
+  display: none;
+}
+
+.group\/th.th-sort-asc .group-\[\.th-sort-asc\]\/th\:rotate-180{
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.group\/th.th-sort-desc .group-\[\.th-sort-desc\]\/th\:rotate-180{
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.group.th-sort-desc .group-\[\.th-sort-desc\]\:rotate-45{
+  --tw-rotate: 45deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.group.th-sort-desc .group-\[\.th-sort-desc\]\:rotate-180{
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .group\/toast.error .group-\[\.error\]\/toast\:bg-red-600{

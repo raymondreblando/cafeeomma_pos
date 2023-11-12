@@ -45,7 +45,7 @@ if($helper->rowCount() > 0){
 
       }
       $response .= '
-          <span class="w-6 h-6 rounded-full buy-btn bg-primary text-[10px] font-semibold text-center leading-6 text-white">x'.$order->quantity.'</span>
+          <span class="shrink-0 w-6 h-6 rounded-full buy-btn bg-primary text-[10px] font-semibold text-center leading-6 text-white">x'.$order->quantity.'</span>
         </div>
       ';
 
