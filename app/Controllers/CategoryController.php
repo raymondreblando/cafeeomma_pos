@@ -57,4 +57,29 @@ class CategoryController
 
     return Utilities::response('success', 'Category updated');
   }
+
+  public function changeStatus(string $id): string
+  {
+    if (empty($id)) {
+      return Utilities::response('error', 'An error occurred');
+    }
+
+    $this->helper->query('SELECT * FROM `categories` WHERE `category_id` = ?', [$id]);
+
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'An error occurred');
+    }
+
+    $categoryData = $this->helper->fetch();
+    $newStatus = $categoryData->category_status == 1 ? 0 : 1;
+    $message = $categoryData->category_status == 1 ? 'Category was deleted' : 'Category was restored';
+
+    $this->helper->query('UPDATE `categories` SET `category_status` = ? WHERE `category_id` = ?', [$newStatus, $id]);
+
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'An error occurred');
+    }
+
+    return Utilities::response('success', $message);
+  }
 }

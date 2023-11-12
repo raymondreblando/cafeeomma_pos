@@ -209,6 +209,8 @@ addEvent("#cash-input", "keyup", ({ target }) => {
   formData.append("discount", discountSelect.value);
   formData.append("cash", parseInt(cashTxt.dataset.id) > 0 ? parseInt(cashTxt.dataset.id) : 0);
 
+  console.log(totalAmountValue)
+
   request(SYSTEM_URL + "app/Jobs/process_cart_summary.php", () => { }, 
   formData, "fetch");
 })
@@ -269,3 +271,22 @@ addEvent(".add-ingredient", "click", () => {
   const ingredientSelect = document.querySelector(".ingredient-select");
   ingredientWrapper.appendChild(ingredientSelect.cloneNode(true));
 })
+
+addEvent(".delete-category", "click", (e) => {
+  const confirmBtn = document.querySelector("#confirm-delete-category");
+  confirmBtn.setAttribute('data-id', e.target.dataset.id);
+  dynamicStyling(".dialog", "hidden", "remove");
+}, 'all')
+
+const tableHeaders = document.querySelectorAll('.table-th');
+if (tableHeaders.length) {
+  tableHeaders.forEach(tableHeader => {
+    tableHeader.addEventListener("click", () => {
+        const tableElement = tableHeader.parentElement.parentElement.parentElement;
+        const headerIndex = Array.prototype.indexOf.call(tableHeader.parentElement.children, tableHeader);
+        const currentIsAscending = tableHeader.classList.contains("th-sort-asc");
+
+        sortTableByColumn(tableElement, headerIndex, !currentIsAscending);
+    });
+  })
+}

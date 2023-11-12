@@ -56,9 +56,30 @@
                   <p class="text-xs font-semibold text-black leading-none"><?= $category->category_name ?></p>
                   <p class="text-[9px] font-semibold text-black/60">Category</p>
                 </div>
-                <button type="button" class="update-category bg-light-gray w-6 h-6 rounded-full ml-auto text-xs disabled:cursor-wait" data-id="<?= $category->category_id ?>">
-                  <i class="ri-restart-line pointer-events-none"></i>
-                </button>
+
+                <?php  
+                  if ($category->category_status == 1) {
+                ?>
+
+                  <button type="button" class="update-category bg-light-gray w-6 h-6 rounded-full ml-auto text-xs disabled:cursor-wait" title="Update Category" data-id="<?= $category->category_id ?>">
+                    <i class="ri-restart-line pointer-events-none"></i>
+                  </button>
+                  <button type="button" class="delete-category bg-light-gray w-6 h-6 rounded-full text-xs disabled:cursor-wait" title="Delete Category" data-id="<?= $category->category_id ?>">
+                    <i class="ri-close-fill pointer-events-none"></i>
+                  </button>
+
+                <?php 
+                  } else {
+                ?>
+                
+                  <button type="button" class="undo-category bg-gray-100 w-10 h-6 text-[10px] font-medium rounded-sm ml-auto disabled:cursor-wait" title="Undo Delete" data-id="<?= $category->category_id ?>">
+                    Undo
+                  </button>
+
+                <?php 
+                  }
+                ?>
+                
               </div>
 
             <?php endforeach ?>
@@ -77,6 +98,17 @@
         </div>
       </div>
     </section>
+
+    <div class="dialog fixed inset-0 grid place-items-center bg-black/60 z-30 hidden">
+      <div class=" max-w-[400px] bg-white p-8 rounded-lg">
+        <h1 class="text-lg text-black font-semibold mb-2">Delete Category</h1>
+        <p class="text-xs text-black/60 font-medium mb-4">Kindly confirm. Do you really want to delete this category?</p>
+        <div class="flex justify-end gap-3">
+          <button class="close-dialog-btn text-xs text-black font-semibold py-2 px-4 hover:bg-gray-200 rounded-md transition-all duration-200" type="button">Close</button>
+          <button id="confirm-delete-category" class="confirm-dialog-btn text-xs text-primary font-semibold py-2 px-4 hover:bg-primary-theme rounded-md transition-all duration-200" type="button">Confirm</button>
+        </div>
+      </div>
+    </div>
   </main>
 
 <?php require('./app/Views/partials/_footer.php') ?>

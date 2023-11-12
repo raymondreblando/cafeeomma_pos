@@ -51,6 +51,28 @@ addEvent("#update-category-form", "submit", (e) => {
   }, formData, "update", "#update-category-btn");
 })
 
+addEvent("#confirm-delete-category", "click", (e) => {
+  disabled("#confirm-delete-category", "disabled");
+
+  request(SYSTEM_URL + "app/Jobs/process_category_status_update.php", () => {
+    setTimeout(() => {
+      location.reload();
+    }, 1300);
+  }, "category_id=" + e.target.dataset.id, "update", null,
+  { "Content-Type": "application/x-www-form-urlencoded" });
+})
+
+addEvent(".undo-category", "click", (e) => {
+  disabled(".undo-category", "disabled");
+
+  request(SYSTEM_URL + "app/Jobs/process_category_status_update.php", () => {
+    setTimeout(() => {
+      location.reload();
+    }, 1300);
+  }, "category_id=" + e.target.dataset.id, "update", null,
+  { "Content-Type": "application/x-www-form-urlencoded" });
+}, "all")
+
 addEvent("#save-menu-form", "submit", (e) => {
   e.preventDefault();
   disabled("#save-menu-btn", "disabled");
