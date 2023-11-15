@@ -53,11 +53,7 @@ if($helper->rowCount() > 0){
           <div class="flex justify-between gap-3">
             <div>
               <p class="text-[8px] font-semibold text-black/60">Price</p>
-              <p class="text-[10px] font-bold text-black">P'.($order->amount + $order->vat).'</p>
-            </div>
-            <div>
-              <p class="text-[8px] font-semibold text-black/60">VAT</p>
-              <p class="text-[10px] font-bold text-black">P'.$order->vat .'</p>
+              <p class="text-[10px] font-bold text-black">P'.($order->amount).'</p>
             </div>
           </div>
         </div>
@@ -67,26 +63,30 @@ if($helper->rowCount() > 0){
 
     $helper->query("SELECT * FROM `cart_summary`");
     $summary_data = $helper->fetch();
-    $order_change = $summary_data->order_change > 0 ? $summary_data->order_change : 0;
+    $order_change = $summary_data->order_change > 0 ? $summary_data->order_change : number_format(0, 2);
  
     $response .= '
       </div>
       <div class="order-stats">
         <div class="flex justify-between gap-2 py-2">
+          <p class="text-xs font-medium text-black">Subtotal</p>
+          <p class="text-xs font-medium text-black">P'.number_format($summary_data->subtotal, 2).'</p>
+        </div>
+        <div class="flex justify-between gap-2 py-2">
+          <p class="text-xs font-medium text-black">VAT</p>
+          <p class="text-xs font-medium text-black">P'.number_format($summary_data->vat, 2).'</p>
+        </div>
+        <div class="flex justify-between gap-2 py-2">
+          <p class="text-xs font-medium text-black">Discount</p>
+          <p class="text-xs font-medium text-black">P'.number_format($summary_data->discount, 2).'</p>
+        </div>
+        <div class="flex justify-between gap-2 py-2">
           <p class="text-xs font-bold text-black">Amount</p>
-          <p class="text-xs font-bold text-black">P'.$summary_data->amount.'</p>
-        </div>
-        <div class="flex justify-between gap-2 py-2">
-          <p class="text-xs font-bold text-black">VAT</p>
-          <p class="text-xs font-bold text-black">P'.$summary_data->vat.'</p>
-        </div>
-        <div class="flex justify-between gap-2 py-2">
-          <p class="text-xs font-bold text-black">Discount</p>
-          <p class="text-xs font-bold text-black">P'.$summary_data->discount.'</p>
+          <p class="text-xs font-bold text-black">P'.number_format($summary_data->amount, 2).'</p>
         </div>
         <div class="flex justify-between gap-2 py-2 border-b-2 border-b-gray-300/40">
           <p class="text-xs font-bold text-black">Cash</p>
-          <p class="text-xs font-bold text-black">P'.$summary_data->cash.'</p>
+          <p class="text-xs font-bold text-black">P'.number_format($summary_data->cash, 2).'</p>
         </div>
         <div class="flex justify-between gap-2 py-2">
           <p class="text-xs font-bold text-black">Change</p>

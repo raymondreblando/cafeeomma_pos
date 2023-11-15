@@ -23,30 +23,42 @@
 
       <div class="pt-20 md:pt-5 pb-5 px-8">
 
-      <?php if(Utilities::isAdmin()){  ?>
+      <?php 
+        if(Utilities::isAdmin()){  
+          require('./app/Views/partials/_notification.php');
+          $appliedFilter = empty($filter) ? '' : $filter;
+      ?>
 
         <div class="flex items-center justify-between gap-4 mb-4">
-          <select class="filter-select appearance-none w-[10rem] h-10 bg-white text-[10px] font-medium text-black px-4 rounded-md">
-            <option value="">Filter by category</option>
-
-            <?php foreach($categoryController->show() as $category): ?>
-
-            <option value="<?= $category->category_id ?>"><?= $category->category_name ?></option>
-
-            <?php endforeach ?>
-
-          </select>
+          <div class="flex gap-3">
+            <select class="filter-select appearance-none w-[10rem] h-10 bg-white text-[10px] font-medium text-black px-4 rounded-md">
+              <option value="">Filter by category</option>
+  
+              <?php foreach($categoryController->show() as $category): ?>
+  
+              <option value="<?= $category->category_id ?>"><?= $category->category_name ?></option>
+  
+              <?php endforeach ?>
+  
+            </select>
+            <select class="sort-select appearance-none w-[10rem] h-10 bg-white text-[10px] font-medium text-black px-4 rounded-md">
+              <option value="">Sort Menus</option>
+              <option value="alphabetical" <?= $appliedFilter === 'alphabetical' ? 'selected' : '' ?>>Alphabetically</option>  
+              <option value="price-asc" <?= $appliedFilter === 'price-asc' ? 'selected' : '' ?>>Price (ASC)</option>  
+              <option value="price-desc" <?= $appliedFilter === 'price-desc' ? 'selected' : '' ?>>Price (DESC)</option>  
+            </select>
+          </div>
           <a href="<?php echo SYSTEM_URL ?>add-menu" class="w-max h-10 flex items-center gap-2 bg-primary text-xs text-white py-2 px-4 rounded-full">
             <i class="ri-add-line"></i>
             <p class="text-[10px]">Add Menu</p>
           </a>
         </div>
 
-        <?php if(count($menuController->show()) > 0){ ?>
+        <?php if(count($menuController->showWithFilter($appliedFilter)) > 0){ ?>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 gap-2">
 
-          <?php foreach($menuController->show() as $menu): ?>
+          <?php foreach($menuController->showWithFilter($appliedFilter) as $menu): ?>
 
             <div class="search-area flex flex-col bg-white rounded-xl p-4">
               <div class="w-full h-24 grid place-items-center bg-light-gray rounded-xl mb-3">
@@ -87,7 +99,10 @@
                   <p class="text-[8px] font-semibold text-black/60">Price</p>
                   <p class="finder4 text-[10px] font-bold text-black">P<?= $menu->menu_price ?></p>
                 </div>
-                <a href="<?php echo SYSTEM_URL ?>menu/<?= $menu->menu_id ?>" class="w-6 h-6 rounded-full buy-btn bg-primary text-xs text-center leading-6 text-white" title="Update Menu"><i class="ri-restart-line"></i></a>
+                <div class="flex gap-1">
+                  <a href="<?php echo SYSTEM_URL ?>menu/<?= $menu->menu_id ?>" class="w-6 h-6 rounded-full buy-btn bg-gray-100 text-xs text-center leading-6 text-black" title="Update Menu"><i class="ri-restart-line"></i></a>
+                  <button type="button" class="delete-menu w-6 h-6 rounded-full buy-btn bg-gray-100 text-xs text-center leading-6 text-black" title="Delete Menu" data-id="<?= $menu->menu_id ?>"><i class="ri-close-fill pointer-events-none"></i></button>
+                </div>
               </div>
             </div>
 
@@ -103,6 +118,17 @@
           </div>
 
         <?php } ?>
+
+        <div class="dialog fixed inset-0 grid place-items-center bg-black/60 z-30 hidden">
+          <div class=" max-w-[400px] bg-white p-8 rounded-lg">
+            <h1 class="text-lg text-black font-semibold mb-2">Delete Menu</h1>
+            <p class="text-xs text-black/60 font-medium mb-4">Kindly confirm. Do you really want to delete this menu?</p>
+            <div class="flex justify-end gap-3">
+              <button class="close-dialog-btn text-xs text-black font-semibold py-2 px-4 hover:bg-gray-200 rounded-md transition-all duration-200" type="button">Close</button>
+              <button id="confirm-delete-menu" class="confirm-dialog-btn text-xs text-primary font-semibold py-2 px-4 hover:bg-primary-theme rounded-md transition-all duration-200" type="button">Confirm</button>
+            </div>
+          </div>
+        </div>
 
       <?php } else{ ?>
 
@@ -172,59 +198,19 @@
                     
                       <div>
 
-                        <?php 
-                          if ($inventory_data->inventory_value > 0) {
-                        ?>
-                            <p class="text-[8px] font-semibold text-black/60"><?php echo $inventory_data->inventory_stocks == 0 ? "Menu was" : "Price" ?></p>
-                            <p class="text-[10px] font-bold text-black"><?php echo $inventory_data->inventory_stocks == 0 ? "Sold Out" : "P".$menu->menu_price ?></p>
-
-                        <?php 
-                          } else {
-                            $isSoldOut = false;
-
-                            $helper->query("SELECT * FROM `ingredient_cost` ic LEFT JOIN `ingredients` i ON ic.ing_id=i.ing_id WHERE ic.menu_id = ? LIMIT 2", [$inventory_data->menu_id]);
-                            $ingredientCosts = $helper->fetchAll();
-
-                            foreach ($ingredientCosts as $ingredientCost) {
-                              if ($ingredientCost->ing_amount > $ingredientCost->ing_stocks) {
-                                $isSoldOut = true;
-                              }
-                            }
-                        ?>
-
-                            <p class="text-[8px] font-semibold text-black/60"><?php echo $isSoldOut ? "Menu was" : "Price" ?></p>
-                            <p class="text-[10px] font-bold text-black"><?php echo $isSoldOut ? "Sold Out" : $menu->menu_price ?></p>
-
-                        <?php 
-                          }
-                        ?>
+                        <p class="text-[8px] font-semibold text-black/60"><?php echo $menu->is_soldout == 1 ? "Menu was" : "Price" ?></p>
+                        <p class="text-[10px] font-bold text-black"><?php echo $menu->is_soldout == 1 ? "Sold Out" : "P".$menu->menu_price ?></p>
                       </div>
 
-                      <?php if($inventory_data->inventory_value > 0){ ?>
+                        <?php if ($menu->is_soldout == 1) { ?>
 
-                        <?php if ($inventory_data->inventory_stocks == 0) { ?>
-
-                          <button type="button" class="w-6 h-6 rounded-full buy-btn bg-gray-100 text-xs text-black cursor-not-allowed" title="Buy"><i class="ri-add-line"></i></button>
+                          <button type="button" class="w-6 h-6 rounded-full bg-gray-100 text-xs text-black cursor-not-allowed" title="Buy"><i class="ri-add-line"></i></button>
 
                         <?php } else { ?>
 
                           <button type="button" class="w-6 h-6 rounded-full buy-btn bg-primary text-xs text-white" title="Buy" data-id="<?= $menu->menu_id ?>"><i class="ri-add-line pointer-events-none"></i></button>
 
                         <?php } ?>
-
-                      <?php } else{ ?>
-
-                        <?php if ($isSoldOut) { ?>
-
-                          <button type="button" class="w-6 h-6 rounded-full buy-btn bg-gray-100 text-xs text-black cursor-not-allowed" title="Buy"><i class="ri-add-line"></i></button>
-
-                        <?php } else { ?>
-
-                          <button type="button" class="w-6 h-6 rounded-full buy-btn bg-primary text-xs text-white" title="Buy" data-id="<?= $menu->menu_id ?>"><i class="ri-add-line pointer-events-none"></i></button>
-
-                        <?php } ?>
-
-                      <?php } ?>
                     
                     <?php } else{ ?>  
 
@@ -253,7 +239,6 @@
 
               <?php 
                 $total_amount = 0;
-                $total_vat = 0;
                 $highestMenuPrice = 0;
                 
                 if(count($cartController->show()) > 0){
@@ -264,7 +249,6 @@
 
                   <?php 
                     foreach($cart_datas as $cart_item): 
-                      $total_vat += $cart_item->vat * $cart_item->quantity;
                       $price = 0;
                       $selected_size = '';
 
@@ -272,11 +256,11 @@
                         $helper->query("SELECT * FROM `sizes` WHERE `size_id` = ?", [$cart_item->size_id]);
                         $size_data = $helper->fetch();
                         $selected_size = $size_data->size;
-                        $price = $size_data->size_price + $cart_item->vat;
+                        $price = $size_data->size_price;
                         $total_amount += $size_data->size_price * $cart_item->quantity;
                         $highestMenuPrice = $price > $highestMenuPrice ? $price : $highestMenuPrice;
                       } else{
-                        $price = $cart_item->menu_price + $cart_item->vat;
+                        $price = $cart_item->menu_price;
                         $total_amount +=  $cart_item->menu_price * $cart_item->quantity;
                         $highestMenuPrice = $price > $highestMenuPrice ? $price : $highestMenuPrice;
                       }
@@ -300,13 +284,9 @@
 
                         </div>
                       </div>
-                      <div class="text-center">
+                      <div class="text-left">
                         <p class="text-[11px] font-semibold text-black leading-none mb-1">Qty</p>
-                        <div class="flex items-center gap-2">
-                          <button class="minus-btn text-[10px] text-primary font-semibold py-[0.5px] px-[3px] rounded-full border border-primary disabled:cursor-wait" data-id="<?= $cart_item->cart_id ?>"><i class="ri-subtract-line pointer-events-none"></i></button>
-                          <span class="count text-[10px] font-bold text-black"><?= $cart_item->quantity ?></span>
-                          <button class="add-btn text-[10px] text-primary font-semibold py-[0.5px] px-[3px] rounded-full border border-primary disabled:cursor-wait" data-id="<?= $cart_item->cart_id ?>"><i class="ri-add-line pointer-events-none"></i></button>
-                        </div>
+                        <input type="number" class="quantity-input w-10 text-xs text-center bg-gray-200" data-id="<?= $cart_item->cart_id ?>" value="<?= $cart_item->quantity ?>">
                       </div>
                     </div>
 
@@ -324,16 +304,18 @@
 
               <div class="grid grid-cols-2 gap-2 border-t border-t-gray-300/40 py-3 mt-auto">
                 <p class="text-[10px] text-right font-bold text-black leading-none" id="highest-amount" data-id="<?php echo number_format($highestMenuPrice, 2) ?>" hidden>P<?php echo number_format($highestMenuPrice, 2) ?></p>
-                <p class="text-[10px] text-left font-medium text-black">Total Amount</p>
-                <p class="text-[10px] text-right font-bold text-black leading-none" id="total-amount" data-id="<?php echo number_format($total_amount + ($total_amount * (5/100)), 2)  ?>">P<?php echo number_format($total_amount + ($total_amount * (5/100)), 2) ?></p>
-                <p class="text-[10px] text-left font-medium text-black">Cash</p>
-                <p class="text-[10px] text-right font-bold text-black leading-none" id="cash" data-id="0">P0</p>
-                <p class="text-[10px] text-left font-medium text-black">Change</p>
-                <p class="text-[10px] text-right font-bold text-black leading-none" id="change">P0</p>
+                <p class="text-[10px] text-left font-medium text-black">Subtotal</p>
+                <p class="text-[10px] text-right font-bold text-black leading-none" data-id="<?php echo $total_amount ?>">P<?php echo number_format($total_amount, 2) ?></p>
                 <p class="text-[10px] text-left font-medium text-black">Discount</p>
-                <p class="text-[10px] text-right font-bold text-black leading-none" id="discount">P0</p>
+                <p class="text-[10px] text-right font-bold text-black leading-none" id="discount">P0.00</p>
                 <p class="text-[10px] text-left font-medium text-black">VAT</p>
-                <p class="text-[10px] text-right font-bold text-black leading-none" id="vat" data-id="<?php echo $total_vat ?>">P<?php echo $total_vat ?></p>
+                <p class="text-[10px] text-right font-bold text-black leading-none" id="vat" data-id="<?php echo Utilities::calculateVat($total_amount) ?>">P<?php echo number_format(Utilities::calculateVat($total_amount), 2) ?></p>
+                <p class="text-[12px] text-left font-bold text-black">Total Amount</p>
+                <p class="text-[12px] text-right font-bold text-black leading-none" id="total-amount" data-id="<?php echo $total_amount + Utilities::calculateVat($total_amount)  ?>">P<?php echo number_format($total_amount + Utilities::calculateVat($total_amount), 2) ?></p>
+                <p class="text-[12px] text-left font-bold text-black">Cash</p>
+                <p class="text-[12px] text-right font-bold text-black leading-none" id="cash" data-id="0">P0.00</p>
+                <p class="text-[12px] text-left font-bold text-black">Change</p>
+                <p class="text-[12px] text-right font-bold text-black leading-none" id="change">P0.00</p>
               </div>
               <div class="pt-4">
                 <select id="discount-select" class="appearance-none w-full h-10 bg-light-gray text-[10px] font-medium text-black/60 px-6 rounded-full mb-3">
@@ -355,21 +337,21 @@
 
         <?php } ?>
 
+        <div class="dialog fixed inset-0 grid place-items-center bg-black/60 z-30 hidden">
+          <div class=" max-w-[400px] bg-white p-8 rounded-lg">
+            <h1 class="text-lg text-black font-semibold mb-2">Checkout Order</h1>
+            <p class="text-xs text-black/60 font-medium mb-4">Kindly confirm to checkout the orders. This action will checkout the orders and cannot be undone.</p>
+            <div class="flex justify-end gap-3">
+              <button class="close-dialog-btn text-xs text-black font-semibold py-2 px-4 hover:bg-gray-200 rounded-md transition-all duration-200" type="button">Close</button>
+              <button id="confirm-checkout-btn" class="confirm-dialog-btn text-xs text-primary font-semibold py-2 px-4 hover:bg-primary-theme rounded-md transition-all duration-200" type="button">Proceed</button>
+            </div>
+          </div>
+        </div>
+
       <?php } ?>
 
       </div>
     </section>
   </main>
-
-  <div class="dialog fixed inset-0 grid place-items-center bg-black/60 z-30 hidden">
-    <div class=" max-w-[400px] bg-white p-8 rounded-lg">
-      <h1 class="text-lg text-black font-semibold mb-2">Checkout Order</h1>
-      <p class="text-xs text-black/60 font-medium mb-4">Kindly confirm to checkout the orders. This action will checkout the orders and cannot be undone.</p>
-      <div class="flex justify-end gap-3">
-        <button class="close-dialog-btn text-xs text-black font-semibold py-2 px-4 hover:bg-gray-200 rounded-md transition-all duration-200" type="button">Close</button>
-        <button id="confirm-checkout-btn" class="confirm-dialog-btn text-xs text-primary font-semibold py-2 px-4 hover:bg-primary-theme rounded-md transition-all duration-200" type="button">Proceed</button>
-      </div>
-    </div>
-  </div>
 
 <?php require('./app/Views/partials/_footer.php') ?>

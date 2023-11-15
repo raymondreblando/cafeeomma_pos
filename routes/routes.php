@@ -38,8 +38,8 @@ Flight::route('/category', function(){
     Flight::render('Views/categories.php');
 });
 
-Flight::route('/menus', function(){
-    Flight::render('Views/menus.php');
+Flight::route('/menus/@filter?', function($filter){
+    Flight::render('Views/menus.php', array('filter' => $filter));
 });
 
 Flight::route('/add-menu', function(){
@@ -72,6 +72,10 @@ Flight::route('/account/@id', function($id){
 
 Flight::route('/security', function(){
     Flight::render('Views/account-security.php');
+});
+
+Flight::route('/profile', function(){
+    Flight::render('Views/profile.php');
 });
 
 Flight::route('/order-summary', function(){

@@ -37,7 +37,7 @@ class AuthProvider
 
     if($account_data->role_id == 'b2fd54eb-4e49-11ee-8673-088fc30176f9') return Utilities::response('success', 'dashboard');
 
-    return Utilities::response('success', 'menus');
+    return Utilities::response('success', 'menus/');
   }
 
   public function signOut(): void

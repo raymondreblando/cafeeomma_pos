@@ -20,7 +20,7 @@ class MenuController extends FileUpload implements AppInterface
 
   public function show(): array
   {
-    $this->helper->query("SELECT * FROM `menus` m LEFT JOIN `categories` c ON m.category_id=c.category_id ORDER BY m.id DESC");
+    $this->helper->query("SELECT * FROM `menus` m LEFT JOIN `categories` c ON m.category_id=c.category_id WHERE c.category_status = ? AND m.menu_status = ? ORDER BY m.is_soldout", [1, 1]);
     return $this->helper->fetchAll();
   }
 
@@ -57,7 +57,7 @@ class MenuController extends FileUpload implements AppInterface
       }
     }
 
-    $this->helper->query("SELECT * FROM `menus` WHERE `menu_name` = ?", [$data['menu_name']]);
+    $this->helper->query("SELECT * FROM `menus` WHERE `menu_name` = ? AND `menu_status` = ?", [$data['menu_name'], 1]);
     if ($this->helper->rowCount() > 0) {
       return Utilities::response('error', 'Menu exist');
     } 
@@ -69,10 +69,9 @@ class MenuController extends FileUpload implements AppInterface
     } 
 
     $menu_id = Utilities::uuid();
-    $menu_vat = Utilities::calculateVat($data['menu_price']);
     $this->helper->startTransaction();
 
-    $this->helper->query("INSERT INTO `menus` (`menu_id`, `menu_name`, `menu_price`, `menu_vat`, `category_id`, `date_created`) VALUES (?, ?, ?, ?, ?, current_timestamp())", [$menu_id, $data['menu_name'], $data['menu_price'], $menu_vat, $data['category']]);
+    $this->helper->query("INSERT INTO `menus` (`menu_id`, `menu_name`, `menu_price`, `category_id`, `date_created`) VALUES (?, ?, ?, ?, current_timestamp())", [$menu_id, $data['menu_name'], $data['menu_price'], $data['category']]);
 
     if ($this->helper->rowCount() < 1) {
       return Utilities::response('error', 'Menu not saved');
@@ -81,9 +80,8 @@ class MenuController extends FileUpload implements AppInterface
     if (isset($sizes) && !empty($sizes[0])) {
       foreach ($sizes as $key => $value) {
         $size_id = Utilities::uuid();
-        $size_vat = Utilities::calculateVat($size_prices[$key]);
 
-        $this->helper->query("INSERT INTO `sizes` (`size_id`, `menu_id`, `size`, `size_price`, `size_vat`, `date_created`) VALUES (?, ?, ?, ?, ?, current_timestamp())", [$size_id, $menu_id, $sizes[$key], $size_prices[$key], $size_vat]);
+        $this->helper->query("INSERT INTO `sizes` (`size_id`, `menu_id`, `size`, `size_price`, `date_created`) VALUES (?, ?, ?, ?, current_timestamp())", [$size_id, $menu_id, $sizes[$key], $size_prices[$key]]);
 
         if ($this->helper->rowCount() < 1) {
           $this->helper->rollback();
@@ -133,23 +131,19 @@ class MenuController extends FileUpload implements AppInterface
       }
     }
 
-    $this->helper->query("SELECT * FROM `menus` WHERE `menu_name` = ? AND NOT `menu_id` = ?", [$data['menu_name'], $data['mid']]);
+    $this->helper->query("SELECT * FROM `menus` WHERE `menu_name` = ? AND `menu_status` = ? AND NOT `menu_id` = ?", [$data['menu_name'], 1, $data['mid']]);
     if ($this->helper->rowCount() > 0) {
       return Utilities::response('error', 'Menu exist');
     } 
 
     $this->setFile($_FILES['menu_img']);
-
-    $menu_vat = Utilities::calculateVat($data['menu_price']);
     $this->helper->startTransaction();
 
-    $this->helper->query("UPDATE `menus` SET `menu_name` = ?, `menu_price` = ?, `menu_vat` = ?,  `category_id` = ? WHERE `menu_id` = ?", [$data['menu_name'], $data['menu_price'], $menu_vat, $data['category'], $data['mid']]);
+    $this->helper->query("UPDATE `menus` SET `menu_name` = ?, `menu_price` = ?, `category_id` = ? WHERE `menu_id` = ?", [$data['menu_name'], $data['menu_price'], $data['category'], $data['mid']]);
 
     if (isset($sizes) && !empty($sizes[0])) {
       foreach ($sizes as $key => $value) {
-        $size_vat = Utilities::calculateVat($size_prices[$key]);
-
-        $this->helper->query("UPDATE `sizes` SET `size` = ?, `size_price` = ?, `size_vat` = ? WHERE `menu_id` = ? AND `size_id` = ?", [$sizes[$key], $size_prices[$key], $size_vat, $data['mid'], $size_ids[$key]]);
+        $this->helper->query("UPDATE `sizes` SET `size` = ?, `size_price` = ? WHERE `menu_id` = ? AND `size_id` = ?", [$sizes[$key], $size_prices[$key], $data['mid'], $size_ids[$key]]);
       }
     }
 
@@ -161,5 +155,35 @@ class MenuController extends FileUpload implements AppInterface
 
     $this->helper->commit();
     return Utilities::response('success', 'Menu updated');
+  }
+
+  public function showWithFilter(string $filter): array
+  {
+    if ($filter === 'alphabetical') {
+      $this->helper->query("SELECT * FROM `menus` m LEFT JOIN `categories` c ON m.category_id=c.category_id WHERE c.category_status = ? AND m.menu_status = ? ORDER BY m.menu_name ASC", [1, 1]);
+    } elseif ($filter === 'price-asc') {
+      $this->helper->query("SELECT * FROM `menus` m LEFT JOIN `categories` c ON m.category_id=c.category_id WHERE c.category_status = ? AND m.menu_status = ? ORDER BY m.menu_price DESC", [1, 1]);
+    } elseif ($filter === 'price-desc') {
+      $this->helper->query("SELECT * FROM `menus` m LEFT JOIN `categories` c ON m.category_id=c.category_id WHERE c.category_status = ? AND m.menu_status = ? ORDER BY m.menu_price ASC", [1, 1]);
+    } else {
+      $this->helper->query("SELECT * FROM `menus` m LEFT JOIN `categories` c ON m.category_id=c.category_id WHERE c.category_status = ? AND m.menu_status = ? ORDER BY m.id DESC", [1, 1]);
+    }
+
+    return $this->helper->fetchAll();
+  }
+
+  public function delete(string $id): string
+  {
+    if (empty($id)) {
+      return Utilities::response('error', 'An error occurred');
+    }
+
+    $this->helper->query('UPDATE `menus` SET `menu_status` = ? WHERE `menu_id` = ?', [0, $id]);
+
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'An error occurred');
+    }
+
+    return Utilities::response('success', 'Menu was deleted');
   }
 }
