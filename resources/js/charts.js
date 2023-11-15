@@ -20,10 +20,10 @@ function createChart(data){
     const chartGender = new Chart(ctx1, {
         type: 'doughnut',
         data: {
-            labels: ['Male', 'Female'],
+            labels: data.category,
             datasets: [{
-                data: data,
-                backgroundColor: ["#5138ee", "#010101"],
+                data: data.total,
+                backgroundColor: ["#221507", "#432a0e", "#543512", "#654016", "#764a19", "#86551d", "#a86a24", "#b1793a", "#b98850", "#c29766", "#cba67c", "#d4b592", "#dcc3a7"],
                 hoverOffset: 4
             }]
         },
