@@ -55,14 +55,36 @@ class IngredientController implements AppInterface
     $this->helper->query("SELECT * FROM `ingredients` WHERE `ing_id` = ?", [$data['iid']]);
     if($this->helper->rowCount() < 1) return Utilities::response('error', 'An error occurred');
 
+    $oldIngredientData = $this->helper->fetch();
+
+    $this->helper->query("SELECT * FROM `ingredient_cost` WHERE `ing_id` = ? GROUP BY `menu_id`", [$data['iid']]);
+    $cost_count = $this->helper->rowCount();
+    if ($cost_count > 0) {
+      $cost_datas = $this->helper->fetchAll();
+    }
+
     $this->helper->query("SELECT * FROM `ingredients` WHERE `ing_name` = ? AND NOT `ing_id` = ?", [$data['ing_name'], $data['iid']]);
     if($this->helper->rowCount() > 0) return Utilities::response('error', 'Ingredient already exist');
 
     $ingredient_stocks = Utilities::convertUnit($data['ing_stocks'], $data['ing_unit']);
     $reorder_level = Utilities::convertUnit($data['ing_reorder_level'], $data['reorder_unit']);
 
+    $this->helper->startTransaction();
+
     $this->helper->query("UPDATE `ingredients` SET `ing_name` = ?, `ing_stocks` = ?, `ing_unit` = ?, `reorder_level` = ?, `reorder_unit` = ? WHERE `ing_id` = ?", [$data['ing_name'], $ingredient_stocks, $data['ing_unit'], $reorder_level, $data['reorder_unit'], $data['iid']]);
+
+    if ($cost_count > 0 && $ingredient_stocks > $oldIngredientData->ing_stocks) {
+      foreach ($cost_datas as $cost) {
+        $this->helper->query('UPDATE `menus` SET `is_soldout` = ? WHERE `menu_id` = ?', [0, $cost->menu_id]);
+  
+        if ($this->helper->rowCount() < 1) {
+          $this->helper->rollback();
+          return Utilities::response('error', 'An error occurred');
+        }
+      }
+    }
     
+    $this->helper->commit();
     return Utilities::response('success', 'Ingredient saved');
   }
 }
