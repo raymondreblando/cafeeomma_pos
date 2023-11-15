@@ -30,6 +30,12 @@ class Utilities
     return date($format, strtotime($date));
   }
 
+  public static function getCurrentDate(): string
+  {
+    $date = new DateTime();
+    return $date->format('Y-m-d H:i:s');
+  }
+
   public static function getPercentage(int $total, int $count): int
   {
     return ($count / $total) * 100;
@@ -38,6 +44,19 @@ class Utilities
   public static function calculateVat(int $price): float
   {
     return $price * (5 / 100);
+  }
+
+  public static function isInvalidUnit(string $unit, string $ingUnit): bool
+  {
+    $validUnits = [
+      'liter' => ['liter', 'l', 'milliliter', 'ml'],
+      'milliliter' => ['liter', 'l', 'milliliter', 'ml'],
+      'kilogram' => ['kilogram', 'kg', 'gram', 'g', 'milligram', 'mg'],
+      'gram' => ['kilogram', 'kg', 'gram', 'g', 'milligram', 'mg'],
+      'milligram' => ['kilogram', 'kg', 'gram', 'g', 'milligram', 'mg']
+    ];
+
+    return !in_array($unit, $validUnits[$ingUnit]) ? true : false;
   }
 
   public static function convertUnit(string $value, string $unit, string $type = ''): float
@@ -114,9 +133,9 @@ class Utilities
     return $acronym;
   }
 
-  public static function generateOrderNo(): int
+  public static function generateOrderNo(int $orderNo = null): int
   {
-    return rand(000000, 999999);
+    return !empty($orderNo) ? $orderNo += 1 : 10001;
   }
 
   public static function response(string $type, string $message): string
