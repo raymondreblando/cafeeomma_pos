@@ -20,7 +20,7 @@ class AccountController extends FileUpload implements AppInterface
 
   public function show(): array
   {
-    $this->helper->query("SELECT * FROM `accounts` WHERE NOT `role_id` = ? ORDER BY `id` DESC", ['b2fd54eb-4e49-11ee-8673-088fc30176f9']);
+    $this->helper->query("SELECT * FROM `accounts` WHERE NOT `role_id` = ? AND NOT `account_status` = ? ORDER BY `account_status` ASC", ['b2fd54eb-4e49-11ee-8673-088fc30176f9', 'deleted']);
     return $this->helper->fetchAll();
   }
 
@@ -101,5 +101,26 @@ class AccountController extends FileUpload implements AppInterface
 
     $this->helper->commit();
     return Utilities::response('success', 'Account updated');
+  }
+
+  public function delete(string $id): string
+  {
+    if(empty($id)) {
+      return Utilities::response('error', 'An error occurred');
+    } 
+
+    $this->helper->query('SELECT * FROM `accounts` WHERE `user_id` = ?', [$id]);
+    
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'An error occurred');
+    }
+
+    $this->helper->query('UPDATE `accounts` SET `account_status` = ? WHERE `user_id` = ?', ['deleted', $id]);
+
+    if ($this->helper->rowCount() < 1) {
+      return Utilities::response('error', 'An error occurred');
+    }
+
+    return Utilities::response('success', 'Account was deleted');
   }
 }
