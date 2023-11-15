@@ -11,6 +11,10 @@
   require('./app/Views/partials/_loader.php');
   require('./app/Views/partials/_toast.php');
 
+  if (Utilities::isAdmin()) {
+    require('./app/Views/partials/_notification.php');
+  }
+
 ?>
 
   <main class="min-h-screen grid md:grid-cols-[11rem_auto] bg-light-gray">

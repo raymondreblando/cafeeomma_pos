@@ -40,7 +40,7 @@
       <?php } ?>
 
       <li>
-        <a href="<?php echo SYSTEM_URL ?>menus" class="group aside__link <?php echo $title == "Menus" || $title == "Add Menu" || $title == "Update Menu" ? "active" : "" ?>">
+        <a href="<?php echo SYSTEM_URL ?>menus/" class="group aside__link <?php echo $title == "Menus" || $title == "Add Menu" || $title == "Update Menu" ? "active" : "" ?>">
           <img src="<?php echo SYSTEM_URL ?>public/icons/menu-active.svg" alt="menu" class="w-4 h-4 hidden group-[.active]:block">
           <img src="<?php echo SYSTEM_URL ?>public/icons/menu.svg" alt="menu" class="w-4 h-4 block group-[.active]:hidden">
           Menus

@@ -3,8 +3,6 @@ session_start();
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-date_default_timezone_set('Asia/Hong_Kong');
-
 use Dotenv\Dotenv;
 use Config\Database;
 use App\Utils\DbHelper;
@@ -39,3 +37,5 @@ if(isset($_SESSION['uid'])){
   $helper->query("SELECT * FROM `accounts` a LEFT JOIN `roles` r ON a.role_id=r.role_id WHERE a.user_id = ?", [$_SESSION['uid']]);
   $user_data = $helper->fetch();
 } 
+
+date_default_timezone_set('Asia/Manila');

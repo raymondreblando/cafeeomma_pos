@@ -11,6 +11,7 @@
   require('./app/Views/partials/_header.php');
   require('./app/Views/partials/_loader.php');
   require('./app/Views/partials/_toast.php');
+  require('./app/Views/partials/_notification.php');
 
 ?>
 
@@ -39,10 +40,19 @@
           <div class="w-[calc(100vw-3.5rem)] md:w-[calc(100vw-16rem)] bg-white overflow-x-auto">
             <table class="w-full text-left border-collapse whitespace-nowrap">
               <thead>
-                <th class="text-[10px] border-l-0 border-t-0">Ingredient Name</th>
-                <th class="text-[10px] border-t-0">Stocks</th>
+                <th class="group table-th text-[10px] border-l-0 border-t-0 cursor-pointer">
+                  Ingredient Name
+                  <i class="inline-table text-sm ml-2 ri-arrow-down-s-fill group-[.th-sort-desc]:rotate-180"></i>
+                </th>
+                <th class="group table-th text-[10px] border-l-0 border-t-0 cursor-pointer">
+                  Stocks
+                  <i class="inline-table text-sm ml-2 ri-arrow-down-s-fill group-[.th-sort-desc]:rotate-180"></i>
+                </th>
                 <th class="text-[10px] border-t-0">Stock Unit</th>
-                <th class="text-[10px] border-t-0">Reorder Level</th>
+                <th class="group table-th text-[10px] border-l-0 border-t-0 cursor-pointer">
+                  Reorder Level
+                  <i class="inline-table text-sm ml-2 ri-arrow-down-s-fill group-[.th-sort-desc]:rotate-180"></i>
+                </th>
                 <th class="text-[10px] border-t-0">Reorder Unit</th>
                 <th width="10%" class="text-[10px] border-r-0 border-t-0"></th>
               </thead>

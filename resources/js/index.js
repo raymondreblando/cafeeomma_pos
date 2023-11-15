@@ -4,6 +4,28 @@
 //   hideLoader();
 // })
 
+window.addEventListener("DOMContentLoaded", () => {
+  const audio = document.querySelector("#notif-sound");
+
+  if (audio !== null) {
+    fetch(SYSTEM_URL + "app/Jobs/process_unread_notification.php",{
+      method: "POST",
+      body: null
+    })
+    .then(res => res.json())
+    .then(data =>{
+      if (audio !== null && data.status === 'New') {
+        audio.muted = false;
+  
+        setTimeout(() => {
+          audio.play();
+          runCount = 1;
+        }, 1500);
+      }
+    })
+  }
+})
+
 addEvent(".show-password", "click", (e) => {
   const parent = e.target.parentElement;
   const input = parent.querySelector("input");
@@ -28,6 +50,26 @@ addEvent("body", "click", () => {
       duration: 100,
       easing: "ease-in",
       fill: "forwards"
+    })
+  }
+
+  const audio = document.querySelector("#notif-sound");
+
+  if (audio !== null) {
+    fetch(SYSTEM_URL + "app/Jobs/process_unread_notification.php",{
+      method: "POST",
+      body: null
+    })
+    .then(res => res.json())
+    .then(data =>{
+      if (audio !== null && data.status === 'New') {
+        audio.muted = false;
+  
+        setTimeout(() => {
+          audio.play();
+          runCount = 1;
+        }, 1500);
+      }
     })
   }
 })
@@ -85,19 +127,19 @@ addEvent(".notification", "click", (e) => {
   e.stopPropagation();
 })
 
-addEvent(".minus-btn", "click", (e) => {
-  const parent = e.target.parentElement;
-  const count = parent.querySelector(".count");
-  let quantity = parseInt(count.textContent.trim()) <= 1 ? 1 : parseInt(count.textContent.trim()) - 1;
-  count.textContent = quantity;
-}, "all")
+// addEvent(".minus-btn", "click", (e) => {
+//   const parent = e.target.parentElement;
+//   const count = parent.querySelector(".count");
+//   let quantity = parseInt(count.textContent.trim()) <= 1 ? 1 : parseInt(count.textContent.trim()) - 1;
+//   count.textContent = quantity;
+// }, "all")
 
-addEvent(".add-btn", "click", (e) => {
-  const parent = e.target.parentElement;
-  const count = parent.querySelector(".count");
-  let quantity = parseInt(count.textContent.trim()) + 1;
-  count.textContent = quantity;
-}, "all")
+// addEvent(".add-btn", "click", (e) => {
+//   const parent = e.target.parentElement;
+//   const count = parent.querySelector(".count");
+//   let quantity = parseInt(count.textContent.trim()) + 1;
+//   count.textContent = quantity;
+// }, "all")
 
 addEvent(".show-order", "click", () => {
   animated(".orders-wrapper", {
@@ -224,6 +266,7 @@ addEvent(".close-dialog-btn", "click", () => {
 })
 
 addEvent("#start-date-filter", "change", ({ target }) => {
+  const totalSalesTxt = document.querySelector(".total-sales");
   const endDateInput = document.querySelector("#end-date-filter");
 
   if(endDateInput.value !== null && endDateInput.value !== ''){
@@ -234,13 +277,24 @@ addEvent("#start-date-filter", "change", ({ target }) => {
   } 
     
   search(target.value, 'table');
+
+  let totalSalesValue = 0.00;
+  const searchResults = document.querySelectorAll(".search-match");
+
+  searchResults.forEach(searchResult => {
+    const salesTxt = searchResult.querySelector(".salesFinder");
+    totalSalesValue += parseFloat(salesTxt.textContent.replace('P', '').trim());
+  })
+
+  totalSalesTxt.textContent = 'P' + totalSalesValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 })
 
 addEvent("#end-date-filter", "change", ({ target }) => {
+  const totalSalesTxt = document.querySelector(".total-sales");
   const startDateInput = document.querySelector("#start-date-filter");
 
   if(startDateInput.value === null || startDateInput.value === ''){
-    startDateInput.value = null;
+    startDateInput.value = "";
     toast('Select a start date', 'error');
     return;
   }
@@ -248,6 +302,75 @@ addEvent("#end-date-filter", "change", ({ target }) => {
   const startDate = new Date(startDateInput.value);
   const endDate = new Date(target.value);
   dateSearch(startDate, endDate, 'table');
+
+  let totalSalesValue = 0.00;
+  const searchResults = document.querySelectorAll(".search-match");
+
+  searchResults.forEach(searchResult => {
+    const salesTxt = searchResult.querySelector(".salesFinder");
+    totalSalesValue += parseFloat(salesTxt.textContent.replace('P', '').trim());
+  })
+
+  totalSalesTxt.textContent = 'P' + totalSalesValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+})
+
+addEvent(".staff-sort", "change", ({ target }) => {
+  const totalSalesTxt = document.querySelector(".total-sales");
+  const startDateInput = document.querySelector("#start-date-filter");
+  const matcher = new RegExp(target.value, 'i');
+
+  if(startDateInput.value === null || startDateInput.value === ''){
+    const searchAreas = document.querySelectorAll('.search-area');
+
+    searchAreas.forEach(searchArea => {
+      const finder = searchArea.querySelector('.staffFinder');
+
+      if (matcher.test(finder.dataset.id)) {
+        searchArea.classList.add('search-match');
+        searchArea.style.display = 'table-row';
+      } else {
+        searchArea.classList.remove('search-match');
+        searchArea.style.display = 'none';
+      }
+    });
+
+    let totalSalesValue = 0.00;
+    const searchResults = document.querySelectorAll(".search-match");
+  
+    searchResults.forEach(searchResult => {
+      const salesTxt = searchResult.querySelector(".salesFinder");
+      totalSalesValue += parseFloat(salesTxt.textContent.replace('P', '').trim());
+    })
+  
+    totalSalesTxt.textContent = 'P' + totalSalesValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  } else {
+    const searchResults = document.querySelectorAll(".search-match");
+    
+    searchResults.forEach(searchResult => {
+      const finder = searchResult.querySelector('.staffFinder');
+      console.log(finder.dataset.id)
+
+      if (matcher.test(finder.dataset.id)) {
+        searchResult.classList.add('search-match');
+        searchResult.classList.add('staff-match');
+        searchResult.style.display = 'table-row';
+      } else {
+        searchResult.classList.remove('staff-match');
+        searchResult.style.display = 'none';
+      }
+    })
+
+    let totalSalesValue = 0.00;
+    const newResults = document.querySelectorAll(".staff-match");
+
+    newResults.forEach(newResults => {
+      const salesTxt = newResults.querySelector(".salesFinder");
+      totalSalesValue += parseFloat(salesTxt.textContent.replace('P', '').trim());
+    })
+
+    totalSalesTxt.textContent = 'P' + totalSalesValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  }
+
 })
 
 addEvent(".inv_tabs", "click", ({ target }) => {
@@ -276,6 +399,39 @@ addEvent(".delete-category", "click", (e) => {
   const confirmBtn = document.querySelector("#confirm-delete-category");
   confirmBtn.setAttribute('data-id', e.target.dataset.id);
   dynamicStyling(".dialog", "hidden", "remove");
+}, 'all')
+
+addEvent(".sort-select", "change", (e) => {
+  location.href = SYSTEM_URL + 'menus/' + e.target.value;
+}, 'all')
+
+addEvent(".delete-menu", "click", (e) => {
+  const confirmBtn = document.querySelector("#confirm-delete-menu");
+  confirmBtn.setAttribute('data-id', e.target.dataset.id);
+  dynamicStyling(".dialog", "hidden", "remove");
+}, 'all')
+
+addEvent(".activate-btn", "click", (e) => {
+  const confirmBtn = document.querySelector("#confirm-activate-account");
+  confirmBtn.setAttribute('data-id', e.target.dataset.id);
+  dynamicStyling("#activate-dialog", "hidden", "remove");
+}, 'all')
+
+addEvent(".deactivate-btn", "click", (e) => {
+  const confirmBtn = document.querySelector("#confirm-deactivate-account");
+  confirmBtn.setAttribute('data-id', e.target.dataset.id);
+  dynamicStyling("#deactivate-dialog", "hidden", "remove");
+}, 'all')
+
+addEvent(".delete-account-btn", "click", (e) => {
+  const confirmBtn = document.querySelector("#confirm-delete-account");
+  confirmBtn.setAttribute('data-id', e.target.dataset.id);
+  dynamicStyling("#delete-dialog", "hidden", "remove");
+}, 'all')
+
+addEvent(".close-accdialog-btn", 'click', (e) => {
+  const dialog = document.querySelector(e.target.dataset.target);
+  dialog.classList.add("hidden");
 }, 'all')
 
 const tableHeaders = document.querySelectorAll('.table-th');

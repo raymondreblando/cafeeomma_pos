@@ -11,6 +11,7 @@
   require('./app/Views/partials/_header.php');
   require('./app/Views/partials/_loader.php');
   require('./app/Views/partials/_toast.php');
+  require('./app/Views/partials/_notification.php');
 
   $inventory_data = $inventoryController->showOne(Utilities::sanitize($id));
 
@@ -38,7 +39,7 @@
           </div>
 
           <?php 
-            if ($inventory_data->inventory_stocks > 0) { 
+            if ($inventory_data->reorder_level > 0) { 
           ?>
 
             <form autocomplete="off" id="update-inventory-form">

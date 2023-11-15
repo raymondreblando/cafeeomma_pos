@@ -11,6 +11,7 @@
   require('./app/Views/partials/_header.php');
   require('./app/Views/partials/_loader.php');
   require('./app/Views/partials/_toast.php');
+  require('./app/Views/partials/_notification.php');
 
 ?>
 
@@ -76,6 +77,9 @@
 
                     <?php } ?>
                     
+                      <button type="button" class="delete-account-btn bg-gray-100 py-[5px] px-2 rounded-full disabled:cursor-wait" title="Delete Account" data-id="<?= $account->user_id ?>">
+                        <img src="<?php echo SYSTEM_URL ?>public/icons/trash.svg" alt="delete" class="w-3 h-3 pointer-events-none">
+                      </button>
                   </div>
                 </div>
               </div>
@@ -95,6 +99,39 @@
 
       </div>
     </section>
+
+    <div class="dialog fixed inset-0 grid place-items-center bg-black/60 z-30 hidden" id="activate-dialog">
+      <div class=" max-w-[400px] bg-white p-8 rounded-lg">
+        <h1 class="text-lg text-black font-semibold mb-2">Activate Account</h1>
+        <p class="text-xs text-black/60 font-medium mb-4">Kindly confirm to activate the account. This action will activate the account and cannot be undone.</p>
+        <div class="flex justify-end gap-3">
+          <button class="close-accdialog-btn text-xs text-black font-semibold py-2 px-4 hover:bg-gray-200 rounded-md transition-all duration-200" type="button" data-target="#activate-dialog">Close</button>
+          <button id="confirm-activate-account" class="confirm-dialog-btn text-xs text-primary font-semibold py-2 px-4 hover:bg-primary-theme rounded-md transition-all duration-200" type="button">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog fixed inset-0 grid place-items-center bg-black/60 z-30 hidden" id="deactivate-dialog">
+      <div class=" max-w-[400px] bg-white p-8 rounded-lg">
+        <h1 class="text-lg text-black font-semibold mb-2">Deactivate Account</h1>
+        <p class="text-xs text-black/60 font-medium mb-4">Kindly confirm to deactivate the account. This action will deactivate the account and cannot be undone.</p>
+        <div class="flex justify-end gap-3">
+          <button class="close-accdialog-btn text-xs text-black font-semibold py-2 px-4 hover:bg-gray-200 rounded-md transition-all duration-200" type="button" data-target="#deactivate-dialog">Close</button>
+          <button id="confirm-deactivate-account" class="confirm-dialog-btn text-xs text-primary font-semibold py-2 px-4 hover:bg-primary-theme rounded-md transition-all duration-200" type="button">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog fixed inset-0 grid place-items-center bg-black/60 z-30 hidden" id="delete-dialog">
+      <div class=" max-w-[400px] bg-white p-8 rounded-lg">
+        <h1 class="text-lg text-black font-semibold mb-2">Delete Account</h1>
+        <p class="text-xs text-black/60 font-medium mb-4">Kindly confirm to delete the account. This action will delete the account and cannot be undone.</p>
+        <div class="flex justify-end gap-3">
+          <button class="close-accdialog-btn text-xs text-black font-semibold py-2 px-4 hover:bg-gray-200 rounded-md transition-all duration-200" type="button" data-target="#delete-dialog">Close</button>
+          <button id="confirm-delete-account" class="confirm-dialog-btn text-xs text-primary font-semibold py-2 px-4 hover:bg-primary-theme rounded-md transition-all duration-200" type="button">Confirm</button>
+        </div>
+      </div>
+    </div>
   </main>
 
 <?php require('./app/Views/partials/_footer.php') ?>

@@ -11,6 +11,7 @@
   require('./app/Views/partials/_header.php');
   require('./app/Views/partials/_loader.php');
   require('./app/Views/partials/_toast.php');
+  require('./app/Views/partials/_notification.php');
 
 ?>
 
@@ -42,7 +43,7 @@
                 </div>
               </div>
               <div class="flex justify-between gap-3 bg-white rounded-xl p-6">
-                <div class="h-max bg-sky-100 p-2 rounded-xl">
+                <div class="h-max bg-primary/10 p-2 rounded-xl">
                   <img src="<?php echo SYSTEM_URL ?>public/icons/menu-blue.svg" alt="menu" class="w-5 h-5">
                 </div>
                 <div class="text-right">
@@ -57,7 +58,7 @@
                 </div>
               </div>
               <div class="flex justify-between gap-3 bg-white rounded-xl p-6">
-                <div class="h-max bg-teal-100 p-2 rounded-xl">
+                <div class="h-max bg-primary/10 p-2 rounded-xl">
                   <img src="<?php echo SYSTEM_URL ?>public/icons/order-green.svg" alt="order" class="w-5 h-5">
                 </div>
                 <div class="text-right">
@@ -72,7 +73,7 @@
                 </div>
               </div>
               <div class="flex justify-between gap-3 bg-white rounded-xl p-6">
-                <div class="h-max bg-orange-100 p-2 rounded-xl">
+                <div class="h-max bg-primary/10 p-2 rounded-xl">
                   <img src="<?php echo SYSTEM_URL ?>public/icons/user-orange.svg" alt="user" class="w-5 h-5">
                 </div>
                 <div class="text-right">
@@ -221,7 +222,6 @@
                     <th class="text-[11px] border-l-0">Order #</th>
                     <th class="text-[11px]">Quantity</th>
                     <th class="text-[11px]">Amount</th>
-                    <th class="text-[11px]">Status</th>
                     <th class="text-[11px] border-r-0">Date</th>
                   </thead>
                   <tbody>
@@ -240,12 +240,6 @@
                           <td><?= $recent_orders[$index]->order_no ?></td>
                           <td><?= $recent_orders[$index]->order_quantity ?></td>
                           <td>P<?= $recent_orders[$index]->amount ?></td>
-                          <td>
-                            <div class="order-status">
-                              <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                              <?= $recent_orders[$index]->order_status ?>
-                            </div>
-                          </td>
                           <td><?= Utilities::formatDate($recent_orders[$index]->date_added, "M d, Y") ?></td>
                         </tr>
 
@@ -325,8 +319,8 @@
             </div>
             <div class="bg-white rounded-xl pt-4 mb-4">
               <div class="px-6 pb-3">
-                <p class="text-[11px] text-black font-semibold">Employee Stats</p>
-                <p class="text-[9px] text-black/60 font-semibold">Statitistic by gender</p>
+                <p class="text-[11px] text-black font-semibold">Category Stats</p>
+                <p class="text-[9px] text-black/60 font-semibold">Statitistic by categories</p>
               </div>
               <div class="lg:h-[206px] px-6 pb-3">
                 <canvas id="chart-gender" class="stats-chart"></canvas>

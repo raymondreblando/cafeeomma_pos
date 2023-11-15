@@ -11,6 +11,7 @@
   require('./app/Views/partials/_header.php');
   require('./app/Views/partials/_loader.php');
   require('./app/Views/partials/_toast.php');
+  require('./app/Views/partials/_notification.php');
 
 ?>
 
@@ -27,7 +28,7 @@
           <div class="flex items-center flex-wrap gap-3">
             <a href="<?php  echo SYSTEM_URL ?>menu-inventory" class="inv_link <?= $title === 'Inventory' ? 'active' : '' ?>">Menus</a>
             <a href="<?php  echo SYSTEM_URL ?>ingredient-inventory" class="inv_link <?= $title === 'Ingredients' ? 'active' : '' ?>">Ingredients</a>
-            <select class="filter-select appearance-none w-[10rem] h-10 bg-white text-[10px] font-medium text-black px-4 rounded-md">
+            <select class="filter-select appearance-none w-[9rem] h-10 bg-white text-[10px] font-medium text-black px-4 rounded-md">
               <option value="">Filter by category</option>
   
               <?php foreach($categoryController->show() as $category): ?>
@@ -49,12 +50,27 @@
           <div class="w-[calc(100vw-3.5rem)] md:w-[calc(100vw-16rem)] bg-white overflow-x-auto">
             <table class="w-full text-left border-collapse whitespace-nowrap">
               <thead>
-                <th class="text-[10px] border-l-0 border-t-0">Menu Name</th>
-                <th class="text-[10px] border-t-0">Price</th>
-                <th class="text-[10px] border-t-0">Stocks</th>
-                <th class="text-[10px] border-t-0">Inventory Value</th>
-                <th class="text-[10px] border-t-0">Reorder Level</th>
-                <th width="10%" class="text-[10px] border-r-0 border-t-0"></th>
+                <th class="group table-th text-[10px] border-l-0 border-t-0 cursor-pointer">
+                  Menu Name
+                  <i class="inline-table text-sm ml-2 ri-arrow-down-s-fill group-[.th-sort-desc]:rotate-180"></i>
+                </th>
+                <th class="group table-th text-[10px] border-t-0 cursor-pointer">
+                  Price
+                  <i class="inline-table text-sm ml-2 ri-arrow-down-s-fill group-[.th-sort-desc]:rotate-180"></i>
+                </th>
+                <th class="group table-th text-[10px] border-t-0 cursor-pointer">
+                  Stocks
+                  <i class="inline-table text-sm ml-2 ri-arrow-down-s-fill group-[.th-sort-desc]:rotate-180"></i>
+                </th>
+                <th class="group table-th text-[10px] border-t-0 cursor-pointer">
+                  Inventory Value
+                  <i class="inline-table text-sm ml-2 ri-arrow-down-s-fill group-[.th-sort-desc]:rotate-180"></i>
+                </th>
+                <th class="group table-th text-[10px] border-t-0 cursor-pointer">
+                  Reorder Level
+                  <i class="inline-table text-sm ml-2 ri-arrow-down-s-fill group-[.th-sort-desc]:rotate-180"></i>
+                </th>
+                <th width="10%" class="group/th table-th text-[10px] border-r-0 border-t-0"></th>
               </thead>
               <tbody>
 
@@ -74,9 +90,9 @@
                     </div>
                   </td>
                   <td class="finder4 border border-gray-300/40">P<?= $inventory->menu_price ?></td>
-                  <td class="finder5 border border-gray-300/40"><?= $inventory->inventory_stocks ? $inventory->inventory_stocks : "Not Applicable" ?></td>
-                  <td class="border border-gray-300/40"><?= $inventory->inventory_value > 0 ? "P" . $inventory->inventory_value : "Not Applicable" ?></td>
-                  <td class="finder6 border border-gray-300/40"><?= $inventory->reorder_level ? $inventory->reorder_level : "Not Applicable" ?></td>
+                  <td class="finder5 border border-gray-300/40"><?= $inventory->reorder_level > 0 ? $inventory->inventory_stocks : "Not Applicable" ?></td>
+                  <td class="border border-gray-300/40"><?= $inventory->reorder_level > 0 ? "P" . $inventory->inventory_value : "Not Applicable" ?></td>
+                  <td class="finder6 border border-gray-300/40"><?= $inventory->reorder_level > 0 ? $inventory->reorder_level : "Not Applicable" ?></td>
                   <td class="border border-gray-300/40 border-r-0">
                     <a href="<?php echo SYSTEM_URL ?>inventory/<?= $inventory->inventory_id ?>" class="flex justify-center items-center gap-1 text-[9px] uppercase bg-light-gray text-black py-2 px-4 rounded-full">
                       <img src="<?php echo SYSTEM_URL ?>public/icons/rotate-right-linear.svg" alt="update" class="w-3 h-3">

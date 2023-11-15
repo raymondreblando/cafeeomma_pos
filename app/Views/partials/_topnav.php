@@ -32,6 +32,7 @@ use App\Utils\Utilities;
         <?php if($unread_count > 0){ ?>
 
           <span class="absolute top-0 right-[7px] w-[10px] h-[10px] rounded-full bg-primary border-2 border-white pointer-events-none"></span>
+          <span class="animate-ping absolute top-0 right-[7px] w-[10px] h-[10px] rounded-full bg-primary border-2 border-white pointer-events-none"></span>
 
         <?php } ?>
 
@@ -57,7 +58,7 @@ use App\Utils\Utilities;
             ?>
 
               <div class="notif <?= $notification->status == "Unread" ? "unread" : "" ?>">
-                <p class="text-[9px] font-semibold text-black/60 leading-snug"><span class="text-primary"><?= $notification == "Menu" ? $referrenceData->menu_name : $referrenceData->ing_name ?></span> stocks is getting low. Restock now.</p>
+                <p class="text-[9px] font-semibold text-black/60 leading-snug"><span class="text-primary"><?= $notification->notif_type == "Menu" ? $referrenceData->menu_name : $referrenceData->ing_name ?></span> stocks is getting low. Restock now.</p>
               </div>
 
             <?php 
@@ -79,10 +80,12 @@ use App\Utils\Utilities;
 
     <?php } ?>
 
-    <div class="hidden sm:block text-right">
-      <p class="text-[11px] font-semibold text-black leading-none"><?php echo isset($user_data) ? $user_data->fullname : "" ?></p>
-      <p class="text-[9px] font-semibold text-black/60"><?php echo isset($user_data) ? $user_data->role_name : "" ?></p>
-    </div>
-    <img src="<?php echo SYSTEM_URL ?>uploads/users/<?= $user_data->profile == 1 ? $user_data->user_id.".jpg" : $user_data->gender.".svg" ?>" alt="profile" class="w-7 h-7 object-cover rounded-full">
+    <a href="<?= SYSTEM_URL ?>profile" class="flex items-center gap-2">
+      <div class="hidden sm:block text-right">
+        <p class="text-[11px] font-semibold text-black leading-none"><?php echo isset($user_data) ? $user_data->fullname : "" ?></p>
+        <p class="text-[9px] font-semibold text-black/60"><?php echo isset($user_data) ? $user_data->role_name : "" ?></p>
+      </div>
+      <img src="<?php echo SYSTEM_URL ?>uploads/users/<?= $user_data->profile == 1 ? $user_data->user_id.".jpg" : $user_data->gender.".svg" ?>" alt="profile" class="w-7 h-7 object-cover rounded-full">
+    </a>
   </div>
 </div>

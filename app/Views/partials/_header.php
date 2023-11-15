@@ -15,3 +15,4 @@
   <link rel="stylesheet" href="<?php echo SYSTEM_URL ?>resources/styles/remixicon.css">
 </head>
 <body>
+  <button class="play-btn" hidden></button>

@@ -307,7 +307,7 @@ function pagination(elem, elemType, $max){
   showPage(currentPage);
 }
 
-function dateSearch(startDate, endDate, type){
+function dateSearch(startDate, endDate,  type){
   const searchAreas = document.querySelectorAll('.search-area');
 
   searchAreas.forEach(searchArea => {
@@ -315,10 +315,10 @@ function dateSearch(startDate, endDate, type){
     const saleDate = new Date(finder.textContent.trim());
 
     if(saleDate >= startDate && saleDate <= endDate){
-      type === "table" ?
-      searchArea.style.display = 'table-row' 
-      : searchArea.style.display = 'block';
+      searchArea.classList.add('search-match');
+      searchArea.style.display = 'table-row';
     } else {
+      searchArea.classList.remove('search-match');
       searchArea.style.display = 'none';
     }
   });
@@ -373,4 +373,70 @@ function sortTableByColumn(table, column, asc = true) {
   table.querySelectorAll("th").forEach(th => th.classList.remove("th-sort-asc", "th-sort-desc"));
   table.querySelector(`th:nth-child(${ column + 1})`).classList.toggle("th-sort-asc", asc);
   table.querySelector(`th:nth-child(${ column + 1})`).classList.toggle("th-sort-desc", !asc);
+}
+
+function orderItemTemplate(datas) {
+  const ordersWrapper = document.querySelector(".order-item-wrapper");
+  const fragment = document.createDocumentFragment();
+
+  for (const key in datas) {
+    const itemWrapper = document.createElement("div");
+    const imageWrapper = document.createElement("div");
+    const menuImage = document.createElement("img");
+    const itemDetailsWrapper = document.createElement("div");
+    const itemName = document.createElement("p");
+    const itemCategory = document.createElement("p");
+    const itemSize = document.createElement("p");
+    const itemPriceQuantityWrapper = document.createElement("div");
+    const itemPriceWrapper = document.createElement("div");
+    const itemPriceLabel = document.createElement("p");
+    const itemPriceValue = document.createElement("p");
+    const itemQuantityWrapper = document.createElement("div");
+    const itemQuantityLabel = document.createElement("p");
+    const itemQuantityValue = document.createElement("p");
+  
+    itemWrapper.setAttribute('class', 'flex items-center gap-6 py-1');
+
+    imageWrapper.setAttribute('class', 'w-24 h-24 grid place-items-center bg-light-gray rounded-xl px-6');
+    menuImage.setAttribute('class', 'w-23 h-23');
+    menuImage.setAttribute('src', SYSTEM_URL + 'uploads/menus/' + datas[key].menu_id + ".png");
+    menuImage.setAttribute('alt', 'menu');
+    imageWrapper.appendChild(menuImage);
+    
+    itemName.setAttribute('class', 'text-[10px] font-semibold text-black leading-none');
+    itemName.textContent = datas[key].menu_name;
+    itemCategory.setAttribute('class', 'text-[8px] font-semibold text-black/60 mb-1');
+    itemCategory.textContent = datas[key].category_name;
+    itemSize.setAttribute('class', 'text-[10px] font-semibold text-black/60 mb-3');
+    itemSize.textContent = datas[key].size_name;
+
+    itemPriceQuantityWrapper.setAttribute('class', 'flex items-center justify-between gap-3');
+    itemPriceLabel.setAttribute('class', 'text-[8px] font-semibold text-black/60');
+    itemPriceLabel.textContent = 'Price';
+    itemPriceValue.setAttribute('class', 'text-[10px] font-bold text-black');
+    itemPriceValue.textContent = "P" + datas[key].menu_price;
+    itemPriceWrapper.appendChild(itemPriceLabel);
+    itemPriceWrapper.appendChild(itemPriceValue);
+
+    itemQuantityLabel.setAttribute('class', 'text-[8px] font-semibold text-black/60');
+    itemQuantityLabel.textContent = 'Qty';
+    itemQuantityValue.setAttribute('class', 'text-[10px] font-bold text-black');
+    itemQuantityValue.textContent = datas[key].quantity;
+    itemQuantityWrapper.appendChild(itemQuantityLabel);
+    itemQuantityWrapper.appendChild(itemQuantityValue);
+    itemPriceQuantityWrapper.appendChild(itemPriceWrapper);
+    itemPriceQuantityWrapper.appendChild(itemQuantityWrapper);
+
+    itemDetailsWrapper.appendChild(itemName);
+    itemDetailsWrapper.appendChild(itemCategory);
+    itemDetailsWrapper.appendChild(itemSize);
+    itemDetailsWrapper.appendChild(itemPriceQuantityWrapper);
+
+    itemWrapper.appendChild(imageWrapper);
+    itemWrapper.appendChild(itemDetailsWrapper);
+
+    fragment.appendChild(itemWrapper);
+  }
+
+  ordersWrapper.appendChild(fragment);
 }

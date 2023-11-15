@@ -91,6 +91,17 @@ addEvent("#update-menu-form", "submit", (e) => {
   }, new FormData(e.target), "update", "#update-menu-btn");
 })
 
+addEvent("#confirm-delete-menu", "click", (e) => {
+  disabled("#confirm-delete-menu", "disabled");
+
+  request(SYSTEM_URL + "app/Jobs/process_menu_status_update.php", () => {
+    setTimeout(() => {
+      location.reload();
+    }, 1300);
+  }, "menu_id=" + e.target.dataset.id, "update", null,
+  { "Content-Type": "application/x-www-form-urlencoded" });
+})
+
 addEvent("#save-inventory-form", "submit", (e) => {
   e.preventDefault();
   disabled("#save-inventory-btn", "disabled");
@@ -160,27 +171,39 @@ addEvent("#update-account-form", "submit", (e) => {
   new FormData(e.target), "create", "#update-account-btn");
 })
 
-addEvent(".deactivate-btn", "click", (e) => {
+addEvent("#confirm-deactivate-account", "click", (e) => {
   e.preventDefault();
-  disabled(".deactivate-btn", "disabled");
+  disabled("#confirm-activate-account", "disabled");
 
   request(SYSTEM_URL + "app/Jobs/process_account_status_update.php", () => {
     setTimeout(() => {
       location.reload();
     }, 1300);
-  }, "account_id=" + e.target.dataset.id, "update", ".deactivate-btn", 
+  }, "account_id=" + e.target.dataset.id, "update", "#confirm-activate-account", 
   { "Content-Type": "application/x-www-form-urlencoded" });
 }, "all")
 
-addEvent(".activate-btn", "click", (e) => {
+addEvent("#confirm-activate-account", "click", (e) => {
   e.preventDefault();
-  disabled(".activate-btn", "disabled");
+  disabled("#confirm-activate-account", "disabled");
 
   request(SYSTEM_URL + "app/Jobs/process_account_status_update.php", () => {
     setTimeout(() => {
       location.reload();
     }, 1300);
-  }, "account_id=" + e.target.dataset.id, "update", ".activate-btn", 
+  }, "account_id=" + e.target.dataset.id, "update", "#confirm-activate-account", 
+  { "Content-Type": "application/x-www-form-urlencoded" });
+}, "all")
+
+addEvent("#confirm-delete-account", "click", (e) => {
+  e.preventDefault();
+  disabled("#confirm-delete-account", "disabled");
+
+  request(SYSTEM_URL + "app/Jobs/process_account_delete.php", () => {
+    setTimeout(() => {
+      location.reload();
+    }, 1300);
+  }, "account_id=" + e.target.dataset.id, "update", "#confirm-delete-account", 
   { "Content-Type": "application/x-www-form-urlencoded" });
 }, "all")
 
@@ -225,21 +248,29 @@ if(menuCards.length){
   })
 }
 
-addEvent(".minus-btn", "click", (e) => {
-  disabled(".minus-btn", "disabled");
+// addEvent(".minus-btn", "click", (e) => {
+//   disabled(".minus-btn", "disabled");
 
+//   request(SYSTEM_URL + "app/Jobs/process_cart_item_quantity_update.php", () => {
+//     location.reload();
+//   }, "cart_id=" + e.target.dataset.id + "&type=minus", "fetch", ".minus-btn", 
+//   { "Content-Type": "application/x-www-form-urlencoded" });
+// }, "all")
+
+// addEvent(".add-btn", "click", (e) => {
+//   disabled(".add-btn", "disabled");
+
+//   request(SYSTEM_URL + "app/Jobs/process_cart_item_quantity_update.php", () => {
+//     location.reload();
+//   }, "cart_id=" + e.target.dataset.id + "&type=add", "fetch", ".add-btn", 
+//   { "Content-Type": "application/x-www-form-urlencoded" });
+// }, "all")
+
+addEvent(".quantity-input", "change", (e) => {
+  quantity = e.target.value === "" ? 0 : e.target.value;
   request(SYSTEM_URL + "app/Jobs/process_cart_item_quantity_update.php", () => {
     location.reload();
-  }, "cart_id=" + e.target.dataset.id + "&type=minus", "fetch", ".minus-btn", 
-  { "Content-Type": "application/x-www-form-urlencoded" });
-}, "all")
-
-addEvent(".add-btn", "click", (e) => {
-  disabled(".add-btn", "disabled");
-
-  request(SYSTEM_URL + "app/Jobs/process_cart_item_quantity_update.php", () => {
-    location.reload();
-  }, "cart_id=" + e.target.dataset.id + "&type=add", "fetch", ".add-btn", 
+  }, "cart_id=" + e.target.dataset.id + "&quantity=" + quantity, "fetch", null, 
   { "Content-Type": "application/x-www-form-urlencoded" });
 }, "all")
 
@@ -269,6 +300,24 @@ addEvent("#menu-select", "change", ({ target }) => {
   }, "menu_id=" + target.value, "fetch", null, 
   { "Content-Type": "application/x-www-form-urlencoded" });
 })
+
+addEvent(".sales-row", "click", ({ currentTarget }) => {
+  const ordersWrapper = document.querySelector(".order-item-wrapper");
+
+  fetch(SYSTEM_URL + "app/Jobs/process_order_item_fetch.php", {
+    method: "POST",
+    body: "order_id=" + currentTarget.dataset.id,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    ordersWrapper.innerHTML = "";
+    orderItemTemplate(data);
+    dynamicStyling(".dialog", "hidden", "remove");
+  });
+}, 'all')
 
 const summary = document.querySelector(".summary-container");
 
