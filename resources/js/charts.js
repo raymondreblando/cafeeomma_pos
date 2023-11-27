@@ -23,7 +23,7 @@ function createChart(data){
             labels: data.category,
             datasets: [{
                 data: data.total,
-                backgroundColor: ["#221507", "#432a0e", "#543512", "#654016", "#764a19", "#86551d", "#a86a24", "#b1793a", "#b98850", "#c29766", "#cba67c", "#d4b592", "#dcc3a7"],
+                backgroundColor: ["#221507", "#af734a", "#3b271d", "#efe0bb", "#fffaf1", "#c7934e", "#a86a24", "#c7934e", "#c29766", "#cba67c", "#d4b592", "#dcc3a7"],
                 hoverOffset: 4
             }]
         },
